@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100" aria-label="Questify logo">
+  <!-- Squirrel mark (simplified version of Questify squirrel) -->
+  <g transform="translate(0,8)" fill="#5C2C0E">
+    <!-- Tail -->
+    <path d="M30 70 C 15 60 12 35 28 18 C 40 8 55 12 58 25 C 50 22 40 28 38 40 C 36 55 42 65 50 70 Z"/>
+    <!-- Body -->
+    <path d="M50 78 C 45 60 55 45 70 42 C 78 40 84 44 86 50 C 90 60 84 70 76 74 C 72 76 68 78 65 80 Z"/>
+    <!-- Head -->
+    <circle cx="78" cy="38" r="14"/>
+    <!-- Ears -->
+    <path d="M70 24 L72 14 L78 22 Z"/>
+    <path d="M82 22 L88 12 L88 24 Z"/>
+    <!-- Lightning bolt on ear -->
+    <path d="M75 6 L78 13 L75 14 L78 21 L73 16 L76 15 L73 9 Z" fill="#E87722"/>
+    <!-- Eye -->
+    <circle cx="82" cy="38" r="2" fill="#FFF8F0"/>
+    <!-- Acorn in paws -->
+    <ellipse cx="70" cy="60" rx="7" ry="9" fill="#5C2C0E"/>
+    <path d="M63 56 Q 70 50 77 56 L 76 58 Q 70 54 64 58 Z" fill="#3a1c08"/>
+    <!-- Front leg -->
+    <path d="M68 70 L 62 84 L 70 84 L 72 75 Z"/>
+    <!-- Back leg -->
+    <path d="M80 76 L 88 86 L 80 88 Z"/>
+    <!-- Baseline shadow -->
+    <line x1="20" y1="90" x2="95" y2="90" stroke="#5C2C0E" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  <!-- Wordmark -->
+  <g font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-weight="900" font-size="56">
+    <text x="115" y="68" fill="#E87722">Q</text>
+    <text x="155" y="68" fill="#1A1A1A">uestify</text>
+    <!-- Orange dot over the i -->
+    <circle cx="298" cy="29" r="5" fill="#E87722"/>
+  </g>
+</svg>

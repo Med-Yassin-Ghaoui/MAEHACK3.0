@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Gear Ratio Challenge · Questify</title>
+  <link rel="icon" href="../assets/acorn.svg"/>
+  <link rel="stylesheet" href="../styles/shared.css"/>
+  <style>
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 22px; align-items: start;
+    }
+    .gear-stage {
+      background: linear-gradient(135deg, #fff8f0, #fde7c2);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      min-height: 420px;
+    }
+    .gauge {
+      background: var(--brown);
+      color: var(--cream);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .gauge .target { font-size: 14px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+    .gauge .target-val { font-size: 36px; font-weight: 900; color: var(--yellow); }
+    .gauge .current { font-size: 14px; opacity: 0.9; margin-top: 6px; }
+    .gauge .current-val { font-size: 22px; font-weight: 800; color: var(--orange-light); }
+
+    .progress {
+      background: rgba(255,248,240,0.15);
+      height: 10px;
+      border-radius: 999px;
+      margin: 12px auto;
+      max-width: 320px;
+      position: relative;
+      overflow: visible;
+    }
+    .progress .needle {
+      position: absolute; top: -4px; width: 4px; height: 18px;
+      background: var(--orange);
+      border-radius: 2px;
+      transition: left 0.3s;
+      transform: translateX(-50%);
+    }
+    .progress .target-marker {
+      position: absolute; top: -8px; width: 2px; height: 26px;
+      background: var(--green);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .progress .target-zone {
+      position: absolute; top: 0; height: 100%;
+      background: rgba(94,201,94,0.35);
+      border-radius: 999px;
+    }
+
+    .gear-canvas { position: relative; height: 320px; }
+
+    .gear-slot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 3px dashed rgba(92,44,14,0.3);
+      background: rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .gear-slot.has-gear { border-style: solid; border-color: transparent; background: transparent; }
+    .gear-slot.drop-target { background: rgba(232,119,34,0.15); border-color: var(--orange); }
+
+    .gear {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 900;
+      cursor: grab;
+      user-select: none;
+      animation: spin var(--spin-dur, 4s) linear infinite;
+      animation-direction: var(--spin-dir, normal);
+    }
+    .gear.dragging { opacity: 0.5; cursor: grabbing; }
+    .gear svg { width: 100%; height: 100%; }
+    .gear .teeth-num {
+      position: absolute;
+      font-size: 14px; color: white;
+      pointer-events: none;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .parts-tray {
+      background: white;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-top: 16px;
+      box-shadow: var(--shadow);
+    }
+    .parts-tray h3 { color: var(--brown); margin-bottom: 12px; font-size: 16px; }
+    .parts-list { display: flex; gap: 10px; flex-wrap: wrap; }
+    .part {
+      width: 70px; height: 70px;
+      cursor: grab;
+      position: relative;
+      transition: transform 0.15s;
+    }
+    .part:hover { transform: scale(1.1); }
+    .part.dragging { opacity: 0.4; }
+    .part .label {
+      position: absolute; bottom: -18px; left: 0; right: 0; text-align: center;
+      font-size: 12px; font-weight: 700; color: var(--brown);
+    }
+
+    .side .card { margin-bottom: 16px; }
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1 class="h2" style="margin-bottom: 6px;">Gear Ratio Challenge</h1>
+    <p class="muted" style="margin-bottom: 20px;">Swap gears in and out. Hit the target output speed within 5%.</p>
+
+    <div class="layout">
+      <div>
+        <div class="gear-stage">
+          <div class="gauge">
+            <div class="target">Target output</div>
+            <div class="target-val"><span id="target-rpm">120</span> rpm</div>
+            <div class="progress">
+              <div class="target-zone" id="zone"></div>
+              <div class="target-marker"></div>
+              <div class="needle" id="needle"></div>
+            </div>
+            <div class="current">Now spinning at</div>
+            <div class="current-val"><span id="current-rpm">—</span> rpm</div>
+          </div>
+
+          <div class="gear-canvas" id="gear-canvas">
+            <!-- Slots populated by JS -->
+          </div>
+        </div>
+
+        <div class="parts-tray">
+          <h3>Parts tray — drag a gear into a slot</h3>
+          <div class="parts-list" id="parts-list"></div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="card">
+          <h3 class="h3" style="font-size:16px; margin-bottom: 8px;">The rule</h3>
+          <p class="muted" style="font-size:14px; line-height:1.5;">
+            Bigger driver gear → output spins <strong>faster</strong>.<br/>
+            Bigger driven gear → output spins <strong>slower</strong>.<br/>
+            Ratio = driver teeth ÷ driven teeth.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 class="h3" style="font-size:16px; margin-bottom: 8px;">Input</h3>
+          <p class="muted" style="font-size:14px;">Motor spins at <strong>60 rpm</strong>.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" id="reset">↺ Reset</button>
+          <button class="btn btn-ghost" id="new-target">🎲 New target</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Win modal -->
+    <div class="modal-backdrop" id="win-modal">
+      <div class="modal" style="text-align:center;">
+        <div style="font-size:56px;">⚙️</div>
+        <h2 class="h2" style="margin: 8px 0;">Locked in!</h2>
+        <p class="muted" style="margin-bottom: 16px;">
+          This is how bikes shift speeds, how engines drive wheels, and how robots control motors.
+          You just used the same math.
+        </p>
+        <button class="btn btn-primary" id="finish">Claim nuts →</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="../scripts/shared.js"></script>
+  <script>
+    window.ASSETS_PREFIX = '../';
+    Q.init();
+
+    // ---------- Setup ----------
+    const INPUT_RPM = 60;
+    // gear sizes: teeth count (drives radius)
+    const PARTS = [
+      { id: 'g1', teeth: 8,  color: '#E87722' },
+      { id: 'g2', teeth: 12, color: '#FFD23F' },
+      { id: 'g3', teeth: 16, color: '#5C2C0E' },
+      { id: 'g4', teeth: 20, color: '#5ec95e' },
+      { id: 'g5', teeth: 24, color: '#9b59b6' },
+      { id: 'g6', teeth: 32, color: '#3498db' },
+    ];
+
+    // 3 slots: driver, idler, driven
+    // Output rpm = INPUT_RPM * (driver_teeth / driven_teeth)
+    // For 3 gears (driver → idler → driven), ratio = driver_teeth / driven_teeth
+    const SLOTS = [
+      { id: 's1', role: 'driver', x: 22, y: 50 },  // % of canvas
+      { id: 's2', role: 'idler',  x: 50, y: 50 },
+      { id: 's3', role: 'driven', x: 78, y: 50 },
+    ];
+    const state = {
+      placed: { s1: null, s2: null, s3: null },
+      target: 120,
+    };
+
+    function teethToPx(teeth) { return 30 + teeth * 3.4; }
+
+    function gearSVG(teeth, color, size) {
+      const r = size / 2;
+      const inner = r * 0.6;
+      const teethOuter = r * 0.92;
+      let path = '';
+      const N = teeth;
+      for (let i = 0; i < N * 2; i++) {
+        const a = (i / (N * 2)) * Math.PI * 2;
+        const rad = i % 2 === 0 ? teethOuter : r;
+        const x = r + Math.cos(a) * rad;
+        const y = r + Math.sin(a) * rad;
+        path += (i === 0 ? 'M' : 'L') + x + ',' + y + ' ';
+      }
+      path += 'Z';
+      return `
+        <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+          <path d="${path}" fill="${color}"/>
+          <circle cx="${r}" cy="${r}" r="${inner}" fill="rgba(255,255,255,0.25)"/>
+          <circle cx="${r}" cy="${r}" r="${r * 0.18}" fill="${color}" stroke="white" stroke-width="2"/>
+          <text x="${r}" y="${r + 4}" text-anchor="middle" fill="white" font-weight="900" font-size="${size * 0.18}">${teeth}</text>
+        </svg>`;
+    }
+
+    // ---------- Render ----------
+    function renderSlots() {
+      const canvas = document.getElementById('gear-canvas');
+      canvas.innerHTML = '';
+      SLOTS.forEach((s, idx) => {
+        const slot = document.createElement('div');
+        slot.className = 'gear-slot';
+        slot.id = s.id;
+        slot.dataset.slot = s.id;
+        slot.style.left = s.x + '%';
+        slot.style.top = s.y + '%';
+        const placed = state.placed[s.id];
+        const size = placed ? teethToPx(placed.teeth) : 90;
+        slot.style.width = size + 'px';
+        slot.style.height = size + 'px';
+
+        if (placed) {
+          slot.classList.add('has-gear');
+          const g = document.createElement('div');
+          g.className = 'gear';
+          g.draggable = true;
+          g.dataset.from = s.id;
+          g.dataset.partId = placed.id;
+          // direction alternates each meshed gear
+          g.style.setProperty('--spin-dir', idx % 2 === 0 ? 'normal' : 'reverse');
+          // duration: faster motor → faster spin = shorter dur
+          // each gear shows the actual rpm at that point
+          const rpmAtSlot = computeRpmAt(idx);
+          const dur = 60 / Math.max(0.5, Math.abs(rpmAtSlot));
+          g.style.setProperty('--spin-dur', dur + 's');
+          g.innerHTML = gearSVG(placed.teeth, placed.color, size);
+          slot.appendChild(g);
+          g.addEventListener('dragstart', onDragFromSlot);
+        } else {
+          slot.innerHTML = `<span style="color: rgba(92,44,14,0.4); font-weight:700; font-size:12px;">${s.role.toUpperCase()}</span>`;
+        }
+        slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drop-target'); });
+        slot.addEventListener('dragleave', () => slot.classList.remove('drop-target'));
+        slot.addEventListener('drop', onDropOnSlot);
+        canvas.appendChild(slot);
+      });
+
+      renderTrays();
+      updateGauge();
+    }
+
+    function renderTrays() {
+      const list = document.getElementById('parts-list');
+      list.innerHTML = '';
+      // Show parts not currently placed
+      const placedIds = new Set(Object.values(state.placed).filter(Boolean).map(p => p.id));
+      PARTS.filter(p => !placedIds.has(p.id)).forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'part';
+        div.draggable = true;
+        div.dataset.partId = p.id;
+        div.innerHTML = gearSVG(p.teeth, p.color, 70) + `<div class="label">${p.teeth}t</div>`;
+        div.addEventListener('dragstart', onDragFromTray);
+        list.appendChild(div);
+      });
+    }
+
+    // ---------- DnD ----------
+    let dragData = null;
+    function onDragFromTray(e) {
+      dragData = { from: 'tray', partId: e.currentTarget.dataset.partId };
+      e.currentTarget.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    function onDragFromSlot(e) {
+      dragData = { from: 'slot', slotId: e.currentTarget.dataset.from };
+      e.currentTarget.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    function onDropOnSlot(e) {
+      e.preventDefault();
+      const slotEl = e.currentTarget;
+      slotEl.classList.remove('drop-target');
+      const slotId = slotEl.dataset.slot;
+      if (!dragData) return;
+
+      if (dragData.from === 'tray') {
+        // swap out whatever's there back to tray
+        state.placed[slotId] = PARTS.find(p => p.id === dragData.partId);
+      } else if (dragData.from === 'slot') {
+        const fromSlot = dragData.slotId;
+        if (fromSlot === slotId) { dragData = null; return; }
+        const tmp = state.placed[fromSlot];
+        state.placed[fromSlot] = state.placed[slotId];
+        state.placed[slotId] = tmp;
+      }
+      dragData = null;
+      renderSlots();
+      checkWin();
+    }
+
+    // Also allow drop back to tray to remove
+    document.getElementById('parts-list').addEventListener('dragover', e => e.preventDefault());
+    document.getElementById('parts-list').addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragData && dragData.from === 'slot') {
+        state.placed[dragData.slotId] = null;
+        renderSlots();
+      }
+      dragData = null;
+    });
+
+    // ---------- Math ----------
+    function computeRpmAt(slotIdx) {
+      // slotIdx 0=driver, 1=idler, 2=driven
+      // RPM(driver) = input
+      // RPM(next) = RPM(prev) * (teeth_prev / teeth_next)
+      let rpm = INPUT_RPM;
+      for (let i = 1; i <= slotIdx; i++) {
+        const prev = state.placed[SLOTS[i-1].id];
+        const cur = state.placed[SLOTS[i].id];
+        if (!prev || !cur) return 0;
+        rpm = rpm * (prev.teeth / cur.teeth);
+      }
+      return rpm;
+    }
+
+    function outputRpm() {
+      return computeRpmAt(2);
+    }
+
+    function updateGauge() {
+      const rpm = outputRpm();
+      document.getElementById('current-rpm').textContent = rpm ? rpm.toFixed(1) : '—';
+      document.getElementById('target-rpm').textContent = state.target;
+
+      // Needle position on a 0..240 rpm scale
+      const maxScale = 240;
+      const pct = Math.min(100, (rpm / maxScale) * 100);
+      document.getElementById('needle').style.left = pct + '%';
+
+      // Target zone (5% tolerance)
+      const lo = state.target * 0.95, hi = state.target * 1.05;
+      const zone = document.getElementById('zone');
+      zone.style.left = (lo / maxScale * 100) + '%';
+      zone.style.width = ((hi - lo) / maxScale * 100) + '%';
+
+      // Target marker (re-anchor to target % rather than 50%)
+      document.querySelector('.target-marker').style.left = (state.target / maxScale * 100) + '%';
+    }
+
+    function checkWin() {
+      const rpm = outputRpm();
+      if (rpm === 0) return;
+      const diff = Math.abs(rpm - state.target) / state.target;
+      if (diff <= 0.05) {
+        setTimeout(() => {
+          document.getElementById('win-modal').classList.add('open');
+          Q.mascot('flip');
+          Q.rainNuts(16);
+        }, 250);
+      }
+    }
+
+    // ---------- Controls ----------
+    document.getElementById('reset').addEventListener('click', () => {
+      state.placed = { s1: null, s2: null, s3: null };
+      renderSlots();
+    });
+    document.getElementById('new-target').addEventListener('click', () => {
+      // Generate a target that's achievable: random ratio from available gears
+      const teethOptions = PARTS.map(p => p.teeth);
+      const a = teethOptions[Math.floor(Math.random()*teethOptions.length)];
+      const b = teethOptions[Math.floor(Math.random()*teethOptions.length)];
+      const rpm = Math.round(INPUT_RPM * (a / b));
+      state.target = Math.max(20, Math.min(220, rpm));
+      state.placed = { s1: null, s2: null, s3: null };
+      renderSlots();
+      Q.toast('New target: ' + state.target + ' rpm');
+    });
+
+    document.getElementById('finish').addEventListener('click', () => {
+      Q.markCompleted('gears');
+      Q.addNuts(60, { mood: 'flip' });
+      setTimeout(() => location.href = '../index.html', 1500);
+    });
+
+    renderSlots();
+  </script>
+</body>
+</html>

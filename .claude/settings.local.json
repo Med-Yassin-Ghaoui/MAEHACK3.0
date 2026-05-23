@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py shell -c ' *)",
+      "Bash(npx tsc *)",
+      "PowerShell($env:PGPASSWORD = \"ghaoui\"; psql -U postgres -h localhost -p 5432 -d Dentapp -c \"\\\\d dentapp_appointment\")",
+      "PowerShell($proj = \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\pcdental\"; $py = \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\env\\\\Scripts\\\\python.exe\"; & $py \"$proj\\\\manage.py\" shell -c \"from django.db import connection; cur = connection.cursor\\(\\); cur.execute\\(\\\\\"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'dentapp_appointment' ORDER BY ordinal_position\\\\\"\\); rows = cur.fetchall\\(\\); [print\\(r\\) for r in rows]\")",
+      "PowerShell($py = \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\env\\\\Scripts\\\\python.exe\"; Push-Location \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\pcdental\"; & $py _introspect_appt.py; Pop-Location)",
+      "PowerShell($py = \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\env\\\\Scripts\\\\python.exe\"; Push-Location \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\pcdental\"; & $py manage.py migrate dentapp; Pop-Location)",
+      "PowerShell($py = \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\env\\\\Scripts\\\\python.exe\"; Push-Location \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\pcdental\"; & $py _verify_appt.py; Pop-Location; Remove-Item \"c:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\\\\pcdental\\\\_verify_appt.py\")",
+      "PowerShell(& \".\\\\env\\\\Scripts\\\\python.exe\" \".\\\\pcdental\\\\manage.py\" makemigrations dentapp)",
+      "Bash(../env/Scripts/python.exe manage.py makemigrations dentapp)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\MSI\\\\Documents\\\\MyENSI\\\\PCD\\\\THEplatform\\\\pcdent\" -Recurse -Depth 2)",
+      "Bash(Select-Object FullName)",
+      "Bash(env\\\\Scripts\\\\python.exe pcdental\\\\manage.py makemigrations dentapp --name admin_fields)",
+      "Bash(python -m http.server 8000)",
+      "Bash(curl -s -o /dev/null -w \"Home: %{http_code}\\\\n\" http://localhost:8000/)",
+      "Bash(curl -s -o /dev/null -w \"Perfume: %{http_code}\\\\n\" http://localhost:8000/scenarios/perfume.html)",
+      "Bash(curl -s -o /dev/null -w \"Gradient: %{http_code}\\\\n\" http://localhost:8000/scenarios/gradient.html)",
+      "Bash(curl -s -o /dev/null -w \"Gears: %{http_code}\\\\n\" http://localhost:8000/scenarios/gears.html)",
+      "Bash(curl -s -o /dev/null -w \"Catapult: %{http_code}\\\\n\" http://localhost:8000/scenarios/catapult.html)",
+      "Bash(taskkill /F /IM python.exe)"
+    ]
+  }
+}

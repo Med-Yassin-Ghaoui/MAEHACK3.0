@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Gradient Descent Playground · Questify</title>
+  <link rel="icon" href="../assets/acorn.svg"/>
+  <link rel="stylesheet" href="../styles/shared.css"/>
+  <style>
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 22px;
+      align-items: start;
+    }
+    .canvas-wrap {
+      background: linear-gradient(to bottom, #cfe7ff 0%, #eaf5ff 60%, #fff8f0 100%);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/10;
+    }
+    canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+    .canvas-hint {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(255,248,240,0.85);
+      backdrop-filter: blur(4px);
+      padding: 8px 14px; border-radius: 10px;
+      font-weight: 700; color: var(--brown);
+      font-size: 14px;
+    }
+    .side h2 { margin-bottom: 6px; }
+    .info-card { margin-bottom: 16px; }
+    .info-card h3 { font-size: 16px; margin-bottom: 6px; }
+    .info-card p { font-size: 14px; color: rgba(26,26,26,0.7); line-height: 1.5; }
+    .legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; }
+    .legend-item { display: flex; gap: 6px; align-items: center; }
+    .legend-dot { width: 14px; height: 14px; border-radius: 50%; }
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1 class="h2" style="margin-bottom: 6px;">Gradient Descent Playground</h1>
+    <p class="muted" style="margin-bottom: 20px;">Drop an acorn anywhere on the terrain. Watch it roll. Land it at the lowest point to win.</p>
+
+    <div class="layout">
+      <div class="canvas-wrap">
+        <div class="canvas-hint" id="hint">👆 Click anywhere on a hilltop to drop the acorn</div>
+        <canvas id="terrain" width="800" height="500"></canvas>
+      </div>
+
+      <aside class="side">
+        <div class="card info-card">
+          <h3>How to play</h3>
+          <p>1. Click on the terrain to place the acorn.<br/>
+             2. The acorn rolls downhill (gradient descent).<br/>
+             3. Land the <strong>lowest valley</strong> to win.</p>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#5ec95e;"></div>Global min</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#e95757;"></div>Local min</div>
+          </div>
+        </div>
+
+        <div class="card info-card">
+          <h3>Attempts</h3>
+          <p><span id="attempts">0</span> tries · <span id="wins">0</span> wins</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" id="regen">🎲 New terrain</button>
+          <button class="btn btn-ghost" id="show-mins">💡 Hint: show valleys</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Win modal -->
+    <div class="modal-backdrop" id="win-modal">
+      <div class="modal" style="text-align:center;">
+        <div style="font-size:56px;">🎉</div>
+        <h2 class="h2" style="margin: 8px 0;">Global minimum!</h2>
+        <p class="muted" style="margin-bottom: 16px;">
+          That's how AI learns. Algorithms (like the ones training ChatGPT) follow the slope to find the best answer.
+          <br/><br/>
+          But just like your acorn — they sometimes get stuck in <strong>local minima</strong>. Where you start matters.
+        </p>
+        <div style="display:flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-secondary" id="play-again">Play again</button>
+          <button class="btn btn-primary" id="finish">Claim nuts →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Local min toast happens inline -->
+  </main>
+
+  <script src="../scripts/shared.js"></script>
+  <script>
+    window.ASSETS_PREFIX = '../';
+    Q.init();
+
+    const canvas = document.getElementById('terrain');
+    const ctx = canvas.getContext('2d');
+
+    let W = canvas.width, H = canvas.height;
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      W = rect.width; H = rect.height;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw();
+    }
+
+    // Terrain function: sum of gaussians (creates smooth hills + valleys)
+    let bumps = [];
+    function generateTerrain() {
+      bumps = [];
+      const count = 4 + Math.floor(Math.random() * 2);
+      for (let i = 0; i < count; i++) {
+        bumps.push({
+          x: 0.1 + Math.random() * 0.8,    // normalized 0..1
+          amp: -80 - Math.random() * 100,  // negative = valley (down)
+          width: 0.08 + Math.random() * 0.08,
+        });
+      }
+      // Add some hills (positive amp)
+      for (let i = 0; i < 2; i++) {
+        bumps.push({
+          x: 0.1 + Math.random() * 0.8,
+          amp: 40 + Math.random() * 50,
+          width: 0.1 + Math.random() * 0.06,
+        });
+      }
+    }
+
+    function heightAt(xNorm) {
+      const base = H * 0.55;
+      let y = base;
+      for (const b of bumps) {
+        const d = xNorm - b.x;
+        y += b.amp * Math.exp(-(d*d) / (2 * b.width * b.width));
+      }
+      return y;
+    }
+    function slopeAt(xNorm) {
+      // numerical derivative
+      const dx = 0.001;
+      return (heightAt(xNorm + dx) - heightAt(xNorm - dx)) / (2 * dx);
+    }
+
+    // Find all local minima
+    function findMinima() {
+      const samples = 400;
+      const ys = [];
+      for (let i = 0; i <= samples; i++) ys.push(heightAt(i/samples));
+      const mins = [];
+      for (let i = 5; i < samples - 5; i++) {
+        if (ys[i] < ys[i-1] && ys[i] < ys[i+1] &&
+            ys[i] < ys[i-3] && ys[i] < ys[i+3]) {
+          mins.push({ xNorm: i / samples, y: ys[i] });
+        }
+      }
+      return mins;
+    }
+    let minima = [];
+    let globalMin = null;
+    let showMinima = false;
+
+    function recomputeMinima() {
+      minima = findMinima();
+      globalMin = minima.reduce((g, m) => !g || m.y > g.y ? g : m, null);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      // Sky gradient already from background. Just draw the terrain.
+
+      // Terrain fill
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      const steps = 200;
+      for (let i = 0; i <= steps; i++) {
+        const xNorm = i / steps;
+        const y = heightAt(xNorm);
+        ctx.lineTo(xNorm * W, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, '#9ec99e');
+      grad.addColorStop(0.5, '#7fb87f');
+      grad.addColorStop(1, '#5a8c5a');
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Terrain outline
+      ctx.beginPath();
+      for (let i = 0; i <= steps; i++) {
+        const xNorm = i / steps;
+        const y = heightAt(xNorm);
+        if (i === 0) ctx.moveTo(xNorm*W, y); else ctx.lineTo(xNorm*W, y);
+      }
+      ctx.strokeStyle = '#3a6b3a';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Show min markers if hint requested
+      if (showMinima) {
+        minima.forEach(m => {
+          const isGlobal = m === globalMin;
+          ctx.beginPath();
+          ctx.arc(m.xNorm * W, m.y + 12, 8, 0, Math.PI*2);
+          ctx.fillStyle = isGlobal ? '#5ec95e' : '#e95757';
+          ctx.fill();
+          ctx.fillStyle = 'white';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(isGlobal ? 'G' : 'L', m.xNorm * W, m.y + 16);
+        });
+      }
+
+      // Draw acorn
+      if (acorn) {
+        drawAcorn(acorn.x, acorn.y);
+        if (acorn.path && acorn.path.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(acorn.path[0].x, acorn.path[0].y);
+          for (const p of acorn.path) ctx.lineTo(p.x, p.y);
+          ctx.strokeStyle = 'rgba(232,119,34,0.6)';
+          ctx.lineWidth = 3;
+          ctx.setLineDash([4,4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+    }
+
+    function drawAcorn(x, y) {
+      const r = 14;
+      // cap
+      ctx.beginPath();
+      ctx.ellipse(x, y - 6, r * 0.95, r * 0.55, 0, 0, Math.PI*2);
+      ctx.fillStyle = '#5C2C0E';
+      ctx.fill();
+      // body
+      ctx.beginPath();
+      ctx.ellipse(x, y + 4, r * 0.8, r, 0, 0, Math.PI*2);
+      const g = ctx.createLinearGradient(x - r, y, x + r, y);
+      g.addColorStop(0, '#FFD23F');
+      g.addColorStop(1, '#E87722');
+      ctx.fillStyle = g;
+      ctx.fill();
+      // stem
+      ctx.beginPath();
+      ctx.moveTo(x, y - 14);
+      ctx.lineTo(x, y - 18);
+      ctx.strokeStyle = '#3a1c08';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // ---------- Acorn simulation ----------
+    let acorn = null;
+    let animId = null;
+
+    function dropAcorn(xNorm) {
+      cancelAnimationFrame(animId);
+      acorn = {
+        xNorm,
+        x: xNorm * W,
+        y: heightAt(xNorm) - 16,
+        vx: 0,
+        vy: 0,
+        rolling: true,
+        path: [],
+      };
+      document.getElementById('attempts').textContent =
+        parseInt(document.getElementById('attempts').textContent, 10) + 1;
+      step();
+    }
+
+    function step() {
+      if (!acorn) return;
+      // gradient descent with momentum (gravity rolling on slope)
+      const slope = slopeAt(acorn.xNorm);
+      const lr = 0.0008; // step
+      acorn.vx = acorn.vx * 0.92 - slope * lr;
+      acorn.xNorm += acorn.vx;
+      acorn.xNorm = Math.max(0.02, Math.min(0.98, acorn.xNorm));
+      acorn.x = acorn.xNorm * W;
+      acorn.y = heightAt(acorn.xNorm) - 16;
+
+      // record path every few frames
+      if (acorn.path.length === 0 || Math.abs(acorn.path[acorn.path.length-1].x - acorn.x) > 4) {
+        acorn.path.push({ x: acorn.x, y: acorn.y + 16 });
+      }
+
+      draw();
+
+      if (Math.abs(acorn.vx) < 0.0004 && Math.abs(slope) < 8) {
+        acorn.rolling = false;
+        evaluate();
+      } else {
+        animId = requestAnimationFrame(step);
+      }
+    }
+
+    function evaluate() {
+      const x = acorn.xNorm;
+      // nearest minimum
+      const nearest = minima.reduce((best, m) =>
+        !best || Math.abs(m.xNorm - x) < Math.abs(best.xNorm - x) ? m : best, null);
+      const isGlobal = nearest === globalMin;
+      if (isGlobal) {
+        document.getElementById('wins').textContent =
+          parseInt(document.getElementById('wins').textContent, 10) + 1;
+        setTimeout(() => {
+          document.getElementById('win-modal').classList.add('open');
+          Q.mascot('flip');
+          Q.rainNuts(18);
+        }, 350);
+      } else {
+        Q.toast('Stuck in a local minimum! Try a different start.', 'fail');
+        Q.mascot('sad');
+        setTimeout(() => { showMinima = true; draw(); }, 400);
+      }
+    }
+
+    // ---------- Interactions ----------
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const xNorm = (e.clientX - rect.left) / rect.width;
+      document.getElementById('hint').style.display = 'none';
+      dropAcorn(xNorm);
+    });
+
+    document.getElementById('regen').addEventListener('click', () => {
+      cancelAnimationFrame(animId);
+      acorn = null;
+      showMinima = false;
+      generateTerrain();
+      recomputeMinima();
+      draw();
+      Q.toast('New terrain!', '');
+    });
+
+    document.getElementById('show-mins').addEventListener('click', () => {
+      showMinima = !showMinima;
+      draw();
+    });
+
+    document.getElementById('play-again').addEventListener('click', () => {
+      document.getElementById('win-modal').classList.remove('open');
+      cancelAnimationFrame(animId);
+      acorn = null;
+      showMinima = false;
+      generateTerrain();
+      recomputeMinima();
+      draw();
+    });
+
+    document.getElementById('finish').addEventListener('click', () => {
+      Q.markCompleted('gradient');
+      Q.addNuts(60, { mood: 'flip' });
+      setTimeout(() => location.href = '../index.html', 1500);
+    });
+
+    generateTerrain();
+    recomputeMinima();
+    window.addEventListener('resize', resize);
+    resize();
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 130" width="120" height="130" aria-label="Questify mascot">
+  <g fill="#5C2C0E">
+    <!-- Tail -->
+    <path d="M30 90 C 8 80 5 40 28 18 C 45 5 65 12 68 30 C 55 26 42 34 40 50 C 38 70 46 82 56 88 Z">
+      <animateTransform attributeName="transform" attributeType="XML" type="rotate" values="0 30 90;-4 30 90;0 30 90;4 30 90;0 30 90" dur="3.5s" repeatCount="indefinite"/>
+    </path>
+    <!-- Body -->
+    <path d="M52 98 C 46 80 56 60 76 56 C 90 54 100 60 102 72 C 104 86 95 94 84 96 C 78 98 70 100 65 102 Z"/>
+    <!-- Head -->
+    <circle cx="86" cy="46" r="18"/>
+    <!-- Ears -->
+    <path d="M76 28 L 78 14 L 86 26 Z"/>
+    <path d="M92 26 L 100 12 L 100 28 Z"/>
+    <!-- Lightning bolt -->
+    <path d="M81 4 L 85 14 L 81 16 L 86 26 L 79 19 L 83 17 L 79 9 Z" fill="#E87722"/>
+    <!-- Eye with blink -->
+    <g>
+      <ellipse cx="92" cy="46" rx="2.5" ry="3" fill="#FFF8F0">
+        <animate attributeName="ry" values="3;3;3;0.3;3;3;3;3;3;3" dur="5s" repeatCount="indefinite"/>
+      </ellipse>
+    </g>
+    <!-- Mouth (subtle smile) -->
+    <path d="M90 54 Q 93 56 96 54" stroke="#3a1c08" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- Acorn -->
+    <g>
+      <ellipse cx="74" cy="76" rx="9" ry="11" fill="#5C2C0E"/>
+      <path d="M65 71 Q 74 64 83 71 L 81 74 Q 74 68 67 74 Z" fill="#3a1c08"/>
+      <path d="M74 64 L 74 60" stroke="#3a1c08" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <!-- Front leg -->
+    <path d="M72 90 L 64 110 L 75 110 L 78 96 Z"/>
+    <!-- Back leg -->
+    <path d="M94 96 L 106 112 L 96 116 Z"/>
+    <!-- Baseline -->
+    <line x1="20" y1="120" x2="110" y2="120" stroke="#5C2C0E" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

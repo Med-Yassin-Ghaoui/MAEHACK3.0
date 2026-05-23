@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>L2 · Coût fixe vs variable · Questify</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/design.css"/>
+  <style>
+    .tray {
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+    }
+    .tray h3 {
+      font-size: 14px;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+    .tray-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      min-height: 64px;
+    }
+    .charge {
+      padding: 12px 16px;
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--radius);
+      font-weight: 500;
+      color: var(--color-brown);
+      font-size: 14px;
+      cursor: grab;
+      user-select: none;
+      transition: all 200ms var(--ease-out-quart);
+      display: inline-flex; flex-direction: column; gap: 2px;
+      max-width: 280px;
+    }
+    .charge .montant {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      font-weight: 400;
+    }
+    .charge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(92,44,14,0.08);
+      border-color: var(--color-border-secondary);
+    }
+    .charge.dragging {
+      opacity: 0.95;
+      transform: scale(1.05) rotate(-1deg);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+      cursor: grabbing;
+    }
+    .charge.correct {
+      background: var(--color-background-success);
+      color: var(--color-text-success);
+      border-color: var(--color-text-success);
+    }
+    .charge.wrong-flash {
+      background: var(--color-background-danger);
+      color: var(--color-text-danger);
+      border-color: var(--color-border-danger);
+    }
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .col {
+      background: var(--color-surface-card);
+      border: 2px dashed var(--color-border-tertiary);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      min-height: 280px;
+      transition: all 180ms;
+    }
+    .col h4 {
+      text-align: center;
+      font-size: 16px;
+      color: var(--color-heading);
+      margin-bottom: 4px;
+    }
+    .col .col-desc {
+      text-align: center;
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      margin-bottom: 16px;
+    }
+    .col .col-items {
+      display: flex; flex-direction: column; gap: 8px;
+      min-height: 100px;
+    }
+    .col.active {
+      border-color: var(--color-accent);
+      background: linear-gradient(180deg, rgba(232,119,34,0.06), transparent);
+      animation: dashedPulse 1s ease-in-out infinite;
+    }
+    .progress-line {
+      display: flex; align-items: center; gap: 10px;
+      margin: 24px 0 16px;
+    }
+    .progress-line .bar {
+      flex: 1;
+      height: 6px;
+      background: var(--color-background-secondary);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-line .bar-fill {
+      height: 100%;
+      background: var(--color-text-success);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 400ms var(--ease-out-quart);
+    }
+    .progress-line .count {
+      font-weight: 600;
+      color: var(--color-brown);
+      font-size: 14px;
+    }
+    @media (max-width: 720px) {
+      .columns { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="animate-in" style="margin-bottom: 24px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="badge badge-business" id="lvl-badge">Niveau 2</span>
+        <span class="muted" style="font-size: 14px;">Business · Coût fixe vs variable</span>
+      </div>
+      <h1 class="h1" style="margin-top: 14px;">Fixe ou variable ?</h1>
+      <p class="lead" style="margin-top: 12px;" id="scenario-text"></p>
+    </header>
+
+    <div class="progress-line">
+      <span class="count"><span id="placed">0</span> / <span id="total">8</span> placés</span>
+      <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+      <span class="count" id="correct-count">0 ✓</span>
+    </div>
+
+    <div class="tray animate-in" style="--i:1;">
+      <h3>Glisse chaque charge dans la bonne colonne</h3>
+      <div class="tray-items" id="tray"></div>
+    </div>
+
+    <div class="columns animate-in" style="--i:2;">
+      <div class="col" data-type="fixe" id="col-fixe">
+        <h4>Coût fixe</h4>
+        <div class="col-desc">Ne change pas avec la quantité produite</div>
+        <div class="col-items" id="items-fixe"></div>
+      </div>
+      <div class="col" data-type="variable" id="col-var">
+        <h4>Coût variable</h4>
+        <div class="col-desc">Grandit avec chaque unité produite</div>
+        <div class="col-items" id="items-var"></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px; display: flex; gap: 12px;">
+      <button class="btn btn-primary" id="finish-btn" disabled>Valider et continuer →</button>
+      <a href="../paths/business.html" class="btn btn-ghost">← Quitter</a>
+    </div>
+  </main>
+
+  <script src="../scripts/data.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script>
+    const LEVEL_ID = 'business-l2';
+    const data = LEVELS[LEVEL_ID];
+
+    App.renderTopbar({ back: '../paths/business.html', title: 'Niveau 2 · Coûts', progressTarget: 0 });
+    App.injectMascot('../');
+    document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' Niveau 2';
+
+    document.getElementById('scenario-text').textContent = data.scenario;
+    document.getElementById('total').textContent = data.charges.length;
+
+    const state = { placed: 0, correct: 0, mistakes: 0, byId: {} };
+
+    function buildCharge(idx) {
+      const c = data.charges[idx];
+      const el = document.createElement('div');
+      el.className = 'charge';
+      el.draggable = true;
+      el.dataset.idx = idx;
+      el.innerHTML = `
+        <span>${c.nom}</span>
+        <span class="montant">${c.montant}</span>
+      `;
+      el.addEventListener('dragstart', (e) => {
+        el.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(idx));
+      });
+      el.addEventListener('dragend', () => el.classList.remove('dragging'));
+      return el;
+    }
+
+    const tray = document.getElementById('tray');
+    data.charges.forEach((_, idx) => tray.appendChild(buildCharge(idx)));
+
+    // Drop zones
+    ['fixe', 'variable'].forEach(type => {
+      const colId = type === 'fixe' ? 'col-fixe' : 'col-var';
+      const itemsId = type === 'fixe' ? 'items-fixe' : 'items-var';
+      const col = document.getElementById(colId);
+      const items = document.getElementById(itemsId);
+
+      col.addEventListener('dragover', e => {
+        e.preventDefault();
+        col.classList.add('active');
+      });
+      col.addEventListener('dragleave', () => col.classList.remove('active'));
+      col.addEventListener('drop', e => {
+        e.preventDefault();
+        col.classList.remove('active');
+        const idx = parseInt(e.dataTransfer.getData('text/plain'), 10);
+        if (isNaN(idx)) return;
+        handleDrop(idx, type, items);
+      });
+    });
+
+    function handleDrop(idx, dropType, itemsEl) {
+      // Already placed correctly? ignore
+      if (state.byId[idx] === 'correct') return;
+      const charge = data.charges[idx];
+      const correct = charge.type === dropType;
+
+      // Remove from current position
+      const existing = document.querySelector(`.charge[data-idx="${idx}"]`);
+      if (existing) existing.remove();
+
+      const newEl = buildCharge(idx);
+      newEl.classList.add('snap-in');
+      if (correct) {
+        newEl.classList.add('correct');
+        newEl.draggable = false;
+        state.byId[idx] = 'correct';
+        state.placed++;
+        state.correct++;
+        App.celebrateElement(newEl);
+        App.addXP(2);
+        if (charge.piege) {
+          App.toast('Bien repéré le piège !', 'success');
+        }
+      } else {
+        // wrong drop: flash danger, then return to tray
+        newEl.classList.add('wrong-flash');
+        itemsEl.appendChild(newEl);
+        App.shakeElement(newEl);
+        state.mistakes++;
+        App.toast(charge.explication || 'Pas dans cette colonne.', 'danger');
+        setTimeout(() => {
+          newEl.remove();
+          const back = buildCharge(idx);
+          tray.appendChild(back);
+        }, 750);
+        updateProgress();
+        return;
+      }
+
+      itemsEl.appendChild(newEl);
+      updateProgress();
+
+      if (state.correct === data.charges.length) {
+        document.getElementById('finish-btn').disabled = false;
+        document.getElementById('finish-btn').classList.add('btn-pulse');
+        App.toast('Toutes les charges sont placées !', 'success');
+        App.mascot('flip');
+      }
+    }
+
+    function updateProgress() {
+      document.getElementById('placed').textContent = state.correct;
+      document.getElementById('correct-count').textContent = `${state.correct} ✓`;
+      const pct = (state.correct / data.charges.length) * 100;
+      document.getElementById('bar-fill').style.width = pct + '%';
+    }
+
+    document.getElementById('finish-btn').addEventListener('click', () => {
+      const perfect = state.mistakes === 0;
+      const stars = perfect ? 3 : (state.mistakes <= 2 ? 2 : 1);
+      const xp = perfect ? 15 : (state.mistakes <= 2 ? 10 : 6);
+      App.showLevelComplete({
+        levelId: LEVEL_ID,
+        xpEarned: xp,
+        stars,
+        insight: data.regleARetenir,
+        nextHref: '../paths/business.html',
+      });
+    });
+  </script>
+</body>
+</html>

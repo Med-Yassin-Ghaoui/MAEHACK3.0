@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>L1 · Lire un graphique · Questify</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/design.css"/>
+  <style>
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .chart-card {
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
+    }
+    .chart-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 18px;
+      gap: 12px;
+    }
+    .chart-header .label {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .chart-header h2 {
+      font-size: 18px;
+      color: var(--color-heading);
+      margin-top: 2px;
+    }
+    .chart-svg {
+      width: 100%;
+      display: block;
+    }
+    .bar-label {
+      font-size: 11px;
+      fill: var(--color-text-secondary);
+      font-weight: 500;
+    }
+    .bar-value {
+      font-size: 12px;
+      fill: var(--color-brown);
+      font-weight: 600;
+    }
+    .axis-line { stroke: var(--color-border-tertiary); stroke-width: 0.5; }
+    .grid-line { stroke: var(--color-border-tertiary); stroke-width: 0.5; stroke-dasharray: 2,2; }
+
+    .qcard {
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
+    }
+    .qheader {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 8px;
+    }
+    .qbadge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .qtext {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-heading);
+      margin-bottom: 16px;
+    }
+    .choices {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .choice {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 0.5px solid var(--color-border-tertiary);
+      background: var(--color-surface-card);
+      cursor: pointer;
+      transition: all 180ms var(--ease-out-quart);
+      text-align: left;
+      font: inherit;
+      color: var(--color-brown);
+      font-weight: 500;
+    }
+    .choice:hover:not(.locked) {
+      transform: translateY(-1px);
+      border-color: var(--color-border-secondary);
+    }
+    .choice.correct {
+      background: var(--color-background-success);
+      border-color: var(--color-text-success);
+      color: var(--color-text-success);
+    }
+    .choice.wrong {
+      background: var(--color-background-danger);
+      border-color: var(--color-border-danger);
+      color: var(--color-text-danger);
+    }
+    .choice.locked { cursor: default; opacity: 0.6; }
+    .explain {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+      border-radius: var(--radius);
+      font-size: 14px;
+      display: none;
+    }
+    .explain.show { display: block; animation: animateIn 350ms var(--ease-out-quart); }
+    .next-row {
+      margin-top: 16px;
+      display: flex; justify-content: flex-end;
+    }
+
+    @media (max-width: 880px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="animate-in" style="margin-bottom: 24px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="badge badge-data" id="lvl-badge">Niveau 1</span>
+        <span class="muted" style="font-size: 14px;">Data · Lire un graphique</span>
+      </div>
+      <h1 class="h1" style="margin-top: 14px;">Les ventes de Sami en janvier</h1>
+    </header>
+
+    <section class="layout">
+      <div class="chart-card animate-in" style="--i:1;">
+        <div class="chart-header">
+          <div>
+            <div class="label" id="chart-label"></div>
+            <h2 id="chart-mois"></h2>
+          </div>
+          <span class="badge badge-data">Janvier</span>
+        </div>
+        <svg class="chart-svg" id="chart" viewBox="0 0 500 360" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+
+      <div>
+        <div class="qcard animate-in" style="--i:2;">
+          <div class="qheader">
+            <span class="qbadge">Question <span id="qnum">1</span> / <span id="qtot">4</span></span>
+            <span class="qbadge" id="score-tag">0 / 4</span>
+          </div>
+          <p class="qtext" id="qtext"></p>
+          <div class="choices" id="choices"></div>
+          <div class="explain" id="explain"></div>
+          <div class="next-row">
+            <button class="btn btn-primary" id="next-btn" style="display:none;">Suivant →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../scripts/data.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script>
+    const LEVEL_ID = 'data-l1';
+    const data = LEVELS[LEVEL_ID];
+
+    App.renderTopbar({ back: '../paths/data.html', title: 'Niveau 1 · Graphique', progressTarget: 0 });
+    App.injectMascot('../');
+    document.getElementById('lvl-badge').innerHTML = App.icon('chart', 14) + ' Niveau 1';
+
+    document.getElementById('chart-label').textContent = data.magasin;
+    document.getElementById('chart-mois').textContent = 'Ventes en ' + data.mois.toLowerCase();
+    document.getElementById('qtot').textContent = data.questions.length;
+
+    // ---------- Chart ----------
+    function drawChart() {
+      const svg = document.getElementById('chart');
+      const W = 500, H = 360, padL = 130, padR = 30, padT = 20, padB = 30;
+      const max = Math.max(...data.donnees.map(d => d.ventes));
+      const niceMax = Math.ceil(max / 50) * 50;
+      const barH = (H - padT - padB) / data.donnees.length;
+      const chartW = W - padL - padR;
+
+      let html = '';
+      // grid lines
+      for (let i = 0; i <= 4; i++) {
+        const x = padL + (i / 4) * chartW;
+        html += `<line class="grid-line" x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}"/>`;
+        html += `<text class="bar-label" x="${x}" y="${H - padB + 14}" text-anchor="middle">${Math.round((i/4) * niceMax)}</text>`;
+      }
+      // bars
+      data.donnees.forEach((d, i) => {
+        const y = padT + i * barH + 4;
+        const bh = barH - 12;
+        const len = (d.ventes / niceMax) * chartW;
+        html += `<text class="bar-label" x="${padL - 8}" y="${y + bh/2 + 4}" text-anchor="end">${d.produit}</text>`;
+        html += `<rect class="bar alt" x="${padL}" y="${y}" width="0" height="${bh}" rx="3" data-i="${i}">
+          <animate attributeName="width" from="0" to="${len}" dur="0.5s" fill="freeze" begin="${i * 0.06}s" calcMode="spline" keySplines="0.22 1 0.36 1"/>
+        </rect>`;
+        html += `<text class="bar-value" x="${padL + len + 6}" y="${y + bh/2 + 4}">${d.ventes}</text>`;
+      });
+      // axis
+      html += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"/>`;
+      svg.innerHTML = html;
+    }
+    drawChart();
+
+    // ---------- Quiz ----------
+    let qIdx = 0, score = 0, locked = false;
+    function renderQuestion() {
+      const q = data.questions[qIdx];
+      document.getElementById('qnum').textContent = qIdx + 1;
+      document.getElementById('qtext').textContent = q.enonce;
+      document.getElementById('explain').classList.remove('show');
+      document.getElementById('explain').textContent = '';
+      document.getElementById('next-btn').style.display = 'none';
+      const choicesEl = document.getElementById('choices');
+      choicesEl.innerHTML = '';
+      locked = false;
+
+      q.choix.forEach(opt => {
+        const b = document.createElement('button');
+        b.className = 'choice';
+        b.textContent = opt;
+        b.addEventListener('click', () => answer(b, opt, q));
+        choicesEl.appendChild(b);
+      });
+    }
+
+    function answer(btn, opt, q) {
+      if (locked) return;
+      locked = true;
+      const correct = opt === q.reponseCorrecte || opt == q.reponseCorrecte;
+      const all = document.querySelectorAll('.choice');
+      all.forEach(b => {
+        b.classList.add('locked');
+        if (b.textContent == q.reponseCorrecte) b.classList.add('correct');
+      });
+      if (correct) {
+        btn.classList.add('correct');
+        App.celebrateElement(btn);
+        score++;
+        App.addXP(3);
+      } else {
+        btn.classList.add('wrong');
+        App.shakeElement(btn);
+      }
+      const expl = document.getElementById('explain');
+      expl.textContent = q.explication;
+      expl.classList.add('show');
+      document.getElementById('score-tag').textContent = `${score} / ${data.questions.length}`;
+      document.getElementById('next-btn').style.display = '';
+    }
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      qIdx++;
+      if (qIdx >= data.questions.length) finish();
+      else renderQuestion();
+    });
+
+    function finish() {
+      const stars = score === data.questions.length ? 3 : (score >= 3 ? 2 : 1);
+      const bonus = score === data.questions.length ? 8 : 0;
+      App.showLevelComplete({
+        levelId: LEVEL_ID,
+        xpEarned: bonus,
+        stars,
+        insight: `Tu as répondu ${score}/${data.questions.length} bonnes réponses. Un graphique à barres, c'est ton meilleur ami pour comparer.`,
+        nextHref: '../paths/data.html',
+      });
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>

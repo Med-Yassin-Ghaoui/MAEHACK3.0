@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 50" width="40" height="50" aria-label="Acorn">
+  <defs>
+    <linearGradient id="acornBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD23F"/>
+      <stop offset="60%" stop-color="#E87722"/>
+      <stop offset="100%" stop-color="#9b4a14"/>
+    </linearGradient>
+    <linearGradient id="acornCap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7a3a10"/>
+      <stop offset="100%" stop-color="#5C2C0E"/>
+    </linearGradient>
+  </defs>
+  <!-- Stem -->
+  <path d="M20 4 Q 22 2 23 6" stroke="#3a1c08" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Cap -->
+  <path d="M6 18 Q 20 6 34 18 L 33 22 Q 20 14 7 22 Z" fill="url(#acornCap)"/>
+  <!-- Cap texture lines -->
+  <line x1="11" y1="16" x2="13" y2="20" stroke="#3a1c08" stroke-width="0.8"/>
+  <line x1="16" y1="13" x2="17" y2="19" stroke="#3a1c08" stroke-width="0.8"/>
+  <line x1="20" y1="12" x2="20" y2="19" stroke="#3a1c08" stroke-width="0.8"/>
+  <line x1="24" y1="13" x2="23" y2="19" stroke="#3a1c08" stroke-width="0.8"/>
+  <line x1="28" y1="16" x2="27" y2="20" stroke="#3a1c08" stroke-width="0.8"/>
+  <!-- Body -->
+  <ellipse cx="20" cy="34" rx="13" ry="14" fill="url(#acornBody)"/>
+  <!-- Highlight -->
+  <ellipse cx="14" cy="28" rx="3" ry="5" fill="#FFE9A3" opacity="0.7"/>
+</svg>

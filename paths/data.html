@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>داتا و تحليل · Questify</title>
+  <link rel="icon" href="../assets/acorn.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/design.css"/>
+  <style>
+    .badge svg { vertical-align: -2px; margin-right: 4px; }
+    html[dir="rtl"] .badge svg { margin-right: 0; margin-left: 4px; }
+    .switch-row {
+      display: flex; align-items: center; justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="switch-row" id="lang-switch-mount"></div>
+    <header class="animate-in" style="margin-bottom: 32px;">
+      <span class="badge badge-data" style="margin-bottom: 12px;" id="path-badge"></span>
+      <h1 class="h1" style="margin-top: 8px;" id="path-title"></h1>
+      <p class="lead" style="margin-top: 14px; max-width: 560px;" id="path-desc"></p>
+    </header>
+
+    <nav class="trail" id="trail" data-stagger></nav>
+  </main>
+
+  <script src="../scripts/i18n.js"></script>
+  <script src="../scripts/data.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script>
+    I18N.init();
+    I18N.injectSwitcher(document.getElementById('lang-switch-mount'));
+
+    const PATH_ID = 'data';
+    const PATH = PATHS[PATH_ID];
+
+    function render() {
+      document.querySelectorAll('.topbar').forEach(t => t.remove());
+      App.renderTopbar({
+        back: '../index.html',
+        title: T(PATH.title),
+        progressTarget: App.pathProgress(PATH_ID).ratio,
+      });
+      App.injectMascot('../');
+
+      document.getElementById('path-badge').innerHTML = App.icon('chart', 14) + ' <span>' + T(PATH.title) + '</span>';
+      document.getElementById('path-title').textContent = T(PATH.tagline);
+      document.getElementById('path-desc').textContent = T(PATH.description);
+
+      const trail = document.getElementById('trail');
+      trail.innerHTML = '';
+      const nextUnlocked = App.nextUnlockedLevel(PATH_ID);
+
+      PATH.levels.forEach((lvl, idx) => {
+        const id = `${PATH_ID}-l${lvl.num}`;
+        const done = App.isCompleted(id);
+        const current = !done && lvl.num === nextUnlocked;
+        const locked = !done && lvl.num > nextUnlocked;
+
+        const node = document.createElement('a');
+        node.className = 'trail-node animate-in' +
+          (done ? ' completed' : '') +
+          (current ? ' current' : '') +
+          (locked ? ' locked' : '');
+        node.style.setProperty('--i', idx);
+        node.href = locked ? '#' : `../levels/${id}.html`;
+        if (locked) node.addEventListener('click', e => {
+          e.preventDefault();
+          App.toast(I18N.t('common.locked_msg'));
+        });
+
+        const statusLabel = done ? '✓ ' + I18N.t('common.completed') : (current ? I18N.t('common.current') : I18N.t('common.locked'));
+
+        node.innerHTML = `
+          <div class="trail-bubble">
+            ${done ? App.icon('checkCircle', 26) : (locked ? App.icon('lock', 22) : `<span data-numeric>L${lvl.num}</span>`)}
+          </div>
+          <div class="trail-info">
+            <h3>${T(lvl.title)}</h3>
+            <p class="desc">${T(lvl.desc)}</p>
+            <p class="xp-tag">${statusLabel} · <span data-numeric>${lvl.xp}</span> ${I18N.t('topbar.xp')}</p>
+          </div>
+        `;
+        trail.appendChild(node);
+      });
+    }
+    render();
+    document.addEventListener('lang:changed', render);
+  </script>
+</body>
+</html>

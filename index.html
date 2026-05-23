@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Questify — تعلّم اللي المدرسة ما تقرّيوش</title>
+  <meta name="description" content="منصّة تعلّم ملعوبة للتلامذة التوانسة. عيش محاكاة في البيزنس و التحليل. ما فمّاش دروس — كان أكشن."/>
+  <link rel="icon" href="assets/acorn.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/design.css"/>
+  <style>
+    /* ============ PAGE-SCOPED ============ */
+    body {
+      background: var(--color-background-primary);
+    }
+    .icon-sm svg { display: block; }
+
+    /* ============ NAV ============ */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 248, 240, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+    .nav-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--color-heading);
+      letter-spacing: -0.01em;
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .brand-mark img { width: 100%; height: 100%; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      margin-left: 12px;
+      flex: 1;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: color 150ms;
+    }
+    .nav-links a:hover { color: var(--color-brown); }
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-cta .btn { padding: 10px 22px; font-size: 14px; }
+
+    /* ============ HERO ============ */
+    .hero {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 88px 32px 80px;
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-brown);
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      animation: pulseGlow 1.8s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(232,119,34,0.4); }
+      50%      { opacity: 0.7; box-shadow: 0 0 0 8px rgba(232,119,34,0); }
+    }
+    .hero-title {
+      font-size: clamp(40px, 5.5vw, 72px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--color-heading);
+      margin-bottom: 24px;
+    }
+    .hero-title .accent { color: var(--color-accent); }
+    .hero-sub {
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--color-text-secondary);
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-xl {
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+    }
+    .hero-meta {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      color: var(--color-text-tertiary);
+      font-size: 13px;
+    }
+    .hero-meta .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-meta .meta-item svg { color: var(--color-text-success); }
+
+    /* HERO ART */
+    .hero-art {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 480px;
+    }
+    .hero-stage {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 1 / 1;
+    }
+    .hero-bg-blob {
+      position: absolute;
+      inset: 6%;
+      background: radial-gradient(circle at 30% 30%, rgba(232,119,34,0.16), transparent 65%),
+                  radial-gradient(circle at 75% 70%, rgba(255,210,63,0.18), transparent 60%);
+      border-radius: 50%;
+      animation: blobPulse 8s ease-in-out infinite;
+    }
+    @keyframes blobPulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.05); }
+    }
+    .hero-mascot {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-mascot img {
+      width: 70%;
+      filter: drop-shadow(0 24px 40px rgba(92, 44, 14, 0.22));
+      animation: mascotBob 4s ease-in-out infinite;
+    }
+    @keyframes mascotBob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-14px) rotate(-1deg); }
+    }
+    /* Floating pill cards */
+    .float-card {
+      position: absolute;
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      box-shadow: 0 12px 32px rgba(92,44,14,0.12);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-brown);
+      animation: floatCard 4.5s ease-in-out infinite;
+    }
+    .float-card .ico {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .float-card .ico.success { background: var(--color-background-success); color: var(--color-text-success); }
+    .float-card .ico.info    { background: var(--color-background-info);    color: var(--color-text-info); }
+    .float-card .ico.warn    { background: #FFF1DE; color: var(--color-accent); }
+    .float-card .ico img { width: 22px; height: 22px; }
+    .float-card .ico svg  { width: 18px; height: 18px; }
+    .float-card .label-line { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; }
+    .float-card .label-val  { font-size: 14px; font-weight: 700; color: var(--color-heading); font-variant-numeric: tabular-nums; }
+    .float-card-1 { top: 6%; left: -4%; animation-delay: 0s; }
+    .float-card-2 { bottom: 14%; right: -6%; animation-delay: 1.5s; }
+    .float-card-3 { top: 48%; right: -8%; animation-delay: 3s; }
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    /* ============ SOCIAL STRIP ============ */
+    .social-strip {
+      background: var(--color-background-secondary);
+      border-top: 0.5px solid var(--color-border-tertiary);
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      padding: 40px 32px;
+    }
+    .social-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      text-align: center;
+    }
+    .social-stat .num {
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--color-heading);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .social-stat .num .accent { color: var(--color-accent); }
+    .social-stat .label {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    /* ============ SECTION ============ */
+    .section {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 96px 32px;
+    }
+    .section-header {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 56px;
+    }
+    .section-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-heading);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: var(--color-text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ============ WHY (features) ============ */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .why-card {
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: 24px;
+      padding: 36px 28px;
+      transition: all 220ms var(--ease-out-quart);
+    }
+    .why-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-border-secondary);
+      box-shadow: 0 16px 40px rgba(92,44,14,0.08);
+    }
+    .why-icon {
+      width: 60px; height: 60px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .why-icon.a { background: var(--color-background-info);    color: var(--color-text-info); }
+    .why-icon.b { background: #FFF1DE;                          color: var(--color-accent); }
+    .why-icon.c { background: var(--color-background-success); color: var(--color-text-success); }
+    .why-icon svg { width: 28px; height: 28px; }
+    .why-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-heading);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .why-card p {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ============ PATHS SHOWCASE ============ */
+    .paths-bg {
+      background: var(--color-background-secondary);
+      border-top: 0.5px solid var(--color-border-tertiary);
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+    .paths-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+    .path-showcase {
+      background: var(--color-surface-card);
+      border-radius: 28px;
+      padding: 40px;
+      border: 0.5px solid var(--color-border-tertiary);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 250ms var(--ease-out-quart);
+    }
+    .path-showcase:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 56px rgba(92,44,14,0.1);
+    }
+    .path-icon-big {
+      width: 64px; height: 64px;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .path-icon-big svg { width: 32px; height: 32px; }
+    .path-icon-big.business { background: var(--color-background-info); color: var(--color-text-info); }
+    .path-icon-big.data     { background: var(--color-background-success); color: var(--color-text-success); }
+    .path-showcase h3 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-heading);
+      letter-spacing: -0.02em;
+    }
+    .path-showcase p {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    .path-levels-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+      padding-top: 20px;
+      border-top: 0.5px solid var(--color-border-tertiary);
+    }
+    .plvl-row {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+    .plvl-num {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: var(--color-background-secondary);
+      color: var(--color-text-tertiary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+    .plvl-row.done .plvl-num { background: var(--color-background-success); color: var(--color-text-success); }
+    .plvl-row.current .plvl-num { background: var(--color-accent); color: white; }
+    .plvl-title { color: var(--color-brown); font-weight: 500; }
+    .plvl-xp { font-size: 12px; color: var(--color-text-tertiary); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .plvl-xp img { width: 14px; height: 14px; }
+    .path-showcase .start-btn {
+      align-self: flex-start;
+      margin-top: 8px;
+    }
+
+    /* ============ HOW IT WORKS ============ */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      position: relative;
+    }
+    .step-card {
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: 20px;
+      padding: 32px 28px;
+      position: relative;
+    }
+    .step-num {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--color-background-secondary);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .step-card .ico-row {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--color-background-secondary);
+      color: var(--color-brown);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .step-card .ico-row svg { width: 24px; height: 24px; }
+    .step-card h3 {
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--color-heading);
+      margin-bottom: 8px;
+    }
+    .step-card p {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ============ TESTIMONIALS ============ */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial {
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    .testimonial .quote-svg {
+      color: var(--color-accent);
+      opacity: 0.4;
+      margin-bottom: 12px;
+    }
+    .testimonial .quote-svg svg { width: 28px; height: 28px; }
+    .testimonial p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--color-brown);
+      margin-bottom: 20px;
+    }
+    .testimonial .person {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testimonial .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-soft));
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .testimonial .meta-name { font-weight: 600; color: var(--color-brown); font-size: 14px; }
+    .testimonial .meta-sub  { color: var(--color-text-tertiary); font-size: 12px; }
+
+    /* ============ FINAL CTA ============ */
+    .final-cta {
+      background: linear-gradient(135deg, var(--color-brown), var(--color-brown-dark));
+      color: white;
+      text-align: center;
+      padding: 96px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .final-cta::before, .final-cta::after {
+      content: '';
+      position: absolute;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,119,34,0.18), transparent 65%);
+    }
+    .final-cta::before { top: -120px; left: -120px; }
+    .final-cta::after  { bottom: -120px; right: -120px; }
+    .final-cta-inner { position: relative; max-width: 720px; margin: 0 auto; }
+    .final-cta h2 {
+      font-size: clamp(32px, 4.5vw, 56px);
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+    .final-cta p {
+      font-size: 17px;
+      color: rgba(255,248,240,0.85);
+      line-height: 1.55;
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+      background: var(--color-background-secondary);
+      border-top: 0.5px solid var(--color-border-tertiary);
+      padding: 64px 32px 28px;
+    }
+    .footer-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 56px;
+      padding-bottom: 40px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+    .footer-brand .brand { margin-bottom: 14px; }
+    .footer-brand p {
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      max-width: 280px;
+      line-height: 1.6;
+    }
+    .footer-col h4 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 14px;
+      color: var(--color-brown);
+      font-weight: 500;
+      padding: 5px 0;
+      transition: color 150ms;
+    }
+    .footer-col a:hover { color: var(--color-accent); }
+    .footer-bottom {
+      max-width: 1240px;
+      margin: 24px auto 0;
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      text-align: center;
+    }
+
+    /* ============ MOBILE ============ */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; gap: 48px; padding: 60px 24px; }
+      .hero-art { min-height: 380px; }
+      .float-card-1 { top: 4%; left: 0%; }
+      .float-card-2 { bottom: 8%; right: 0%; }
+      .float-card-3 { display: none; }
+      .why-grid, .steps, .testimonials-grid, .paths-grid { grid-template-columns: 1fr; }
+      .social-inner { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .section { padding: 64px 24px; }
+      .nav-inner { padding: 14px 20px; gap: 16px; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 560px) {
+      .hero-title { font-size: 40px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+      .social-inner { grid-template-columns: 1fr 1fr; }
+      .social-stat .num { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="brand">
+        <span class="brand-mark"><img src="assets/squirrel-mascot.svg" alt="Questify"/></span>
+        Questify
+      </a>
+      <div class="nav-links">
+        <a href="#parcours" data-i18n="nav.paths">Parcours</a>
+        <a href="#comment" data-i18n="nav.how">Comment ça marche</a>
+        <a href="#temoignages" data-i18n="nav.testimonials">Témoignages</a>
+        <a href="#pourquoi" data-i18n="nav.why">Pourquoi</a>
+      </div>
+      <div class="nav-cta">
+        <div id="lang-switch-mount"></div>
+        <a href="#parcours" class="btn btn-secondary" data-i18n="nav.login">Se connecter</a>
+        <a href="#parcours" class="btn btn-primary" data-i18n="nav.start">Commencer</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="animate-in">
+      <span class="hero-eyebrow">
+        <span class="dot"></span> <span data-i18n="hero.eyebrow">Pour les lycéens tunisiens · 15-18 ans</span>
+      </span>
+      <h1 class="hero-title">
+        <span data-i18n="hero.title">Apprends ce que</span> <br/>
+        <span class="accent" data-i18n="hero.title2">l'école</span> <span data-i18n="hero.title3">n'enseigne</span> <br/>
+        <span data-i18n="hero.title4">pas.</span>
+      </h1>
+      <p class="hero-sub" data-i18n="hero.sub">
+        Pas de cours. Pas de théorie sèche. Tu vis des simulations interactives — lancer une marque,
+        analyser des ventes, lire un graphique — et tu apprends en décidant.
+      </p>
+      <div class="hero-cta-row">
+        <a href="#parcours" class="btn btn-primary btn-xl">
+          <span data-i18n="hero.cta.start">Commencer gratuitement</span>
+          <span id="hero-arrow"></span>
+        </a>
+        <a href="#comment" class="btn btn-ghost btn-xl" style="box-shadow:none;" data-i18n="hero.cta.how">Voir comment ça marche</a>
+      </div>
+      <div class="hero-meta">
+        <span class="meta-item" id="meta-1"></span>
+        <span class="meta-item" id="meta-2"></span>
+        <span class="meta-item" id="meta-3"></span>
+      </div>
+    </div>
+
+    <div class="hero-art animate-in" style="--i:1;">
+      <div class="hero-stage">
+        <div class="hero-bg-blob"></div>
+        <div class="hero-mascot">
+          <img src="assets/squirrel-mascot.svg" alt="Mascotte Questify"/>
+        </div>
+
+        <div class="float-card float-card-1">
+          <div class="ico success" id="float-1-ico"></div>
+          <div>
+            <div class="label-line" id="float-1-line"></div>
+            <div class="label-val">+<span data-numeric>10</span> <span style="color:var(--color-accent);" id="float-1-unit"></span></div>
+          </div>
+        </div>
+
+        <div class="float-card float-card-2">
+          <div class="ico warn"><img src="assets/acorn.svg" alt=""/></div>
+          <div>
+            <div class="label-line" id="float-2-line"></div>
+            <div class="label-val"><span class="roll-num" id="float-xp" data-numeric>0</span> <span id="float-2-unit"></span></div>
+          </div>
+        </div>
+
+        <div class="float-card float-card-3">
+          <div class="ico info" id="float-3-ico"></div>
+          <div>
+            <div class="label-line" id="float-3-line"></div>
+            <div class="label-val"><span data-numeric>32,6%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL STRIP -->
+  <section class="social-strip">
+    <div class="social-inner">
+      <div class="social-stat">
+        <div class="num"><span class="accent">2</span></div>
+        <div class="label" data-i18n="social.paths">Parcours actifs</div>
+      </div>
+      <div class="social-stat">
+        <div class="num"><span class="accent">10</span></div>
+        <div class="label" data-i18n="social.levels">Niveaux interactifs</div>
+      </div>
+      <div class="social-stat">
+        <div class="num"><span class="accent">5</span> min</div>
+        <div class="label" data-i18n="social.minutes">Par leçon</div>
+      </div>
+      <div class="social-stat">
+        <div class="num"><span class="accent">100</span>%</div>
+        <div class="label" data-i18n="social.free">Gratuit, sans pub</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="section" id="pourquoi">
+    <div class="section-header">
+      <div class="section-tag" data-i18n="why.tag">Pourquoi Questify</div>
+      <h2 class="section-title" data-i18n="why.title">L'apprentissage qui ressemble enfin à un jeu vidéo.</h2>
+      <p class="section-sub" data-i18n="why.sub">
+        On a regardé comment les meilleurs jeux retiennent les ados pendant des heures,
+        et on a transformé ces mécaniques en vrais cours de vie.
+      </p>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon a" id="why-1-ico"></div>
+        <h3 data-i18n="why.1.title">Tu joues, tu apprends.</h3>
+        <p data-i18n="why.1.text">
+          Aucune lecture passive. Tu fais des choix, tu vois les conséquences, et tu corriges.
+          C'est exactement comme ça que ton cerveau apprend le mieux.
+        </p>
+      </div>
+
+      <div class="why-card">
+        <div class="why-icon b" id="why-2-ico"></div>
+        <h3 data-i18n="why.2.title">Vraies compétences.</h3>
+        <p data-i18n="why.2.text">
+          Gérer un budget, lire un graphique, fixer un prix, repérer des erreurs.
+          Des choses que la vie te demandera, et que l'école n'enseigne pas vraiment.
+        </p>
+      </div>
+
+      <div class="why-card">
+        <div class="why-icon c" id="why-3-ico"></div>
+        <h3 data-i18n="why.3.title">5 minutes suffisent.</h3>
+        <p data-i18n="why.3.text">
+          Chaque niveau se boucle en 3 à 5 minutes. Idéal pendant la récré,
+          avant de dormir, ou dans les transports.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PATHS -->
+  <section class="paths-bg" id="parcours">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag" data-i18n="paths.tag">Nos parcours</div>
+        <h2 class="section-title" data-i18n="paths.title">Choisis ton chemin.</h2>
+        <p class="section-sub" data-i18n="paths.sub">
+          Deux parcours actifs aujourd'hui — d'autres arrivent. Chaque parcours te fait
+          progresser de la perception simple jusqu'à un défi boss.
+        </p>
+      </div>
+
+      <div class="paths-grid">
+        <div class="path-showcase">
+          <div class="path-icon-big business" id="path-business-ico"></div>
+          <div>
+            <h3 data-i18n="paths.business.title">Business &amp; Entrepreneuriat</h3>
+            <p data-i18n="paths.business.desc">Du premier flacon au lancement réel. Coûts, prix, marges, budgets — appris en lançant ta propre marque de parfum.</p>
+          </div>
+          <div class="path-levels-list" id="business-levels"></div>
+          <a href="paths/business.html" class="btn btn-primary start-btn" id="start-business"></a>
+        </div>
+
+        <div class="path-showcase">
+          <div class="path-icon-big data" id="path-data-ico"></div>
+          <div>
+            <h3 data-i18n="paths.data.title">Data &amp; Analyse</h3>
+            <p data-i18n="paths.data.desc">Tu deviens l'analyste de Sami, épicier à Cité El Khadra. Lire ses ventes, comparer ses mois, repérer ses erreurs, écrire son rapport.</p>
+          </div>
+          <div class="path-levels-list" id="data-levels"></div>
+          <a href="paths/data.html" class="btn btn-primary start-btn" id="start-data"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="comment">
+    <div class="section-header">
+      <div class="section-tag" data-i18n="how.tag">Comment ça marche</div>
+      <h2 class="section-title" data-i18n="how.title">Trois étapes. C'est tout.</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="ico-row" id="step-1-ico"></div>
+        <h3 data-i18n="how.1.title">Choisis un parcours</h3>
+        <p data-i18n="how.1.text">Business pour lancer ta marque. Data pour aider Sami. Plus d'options arrivent bientôt.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="ico-row" id="step-2-ico"></div>
+        <h3 data-i18n="how.2.title">Résous des défis interactifs</h3>
+        <p data-i18n="how.2.text">5 niveaux par parcours. Chaque niveau te fait découvrir un concept en le pratiquant — pas en le lisant.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="ico-row" id="step-3-ico"></div>
+        <h3 data-i18n="how.3.title">Gagne des nuts, monte de niveau</h3>
+        <p data-i18n="how.3.text">Chaque bonne réponse te rapporte des nuts. Termine un niveau, débloque le suivant. Comme dans un vrai jeu.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="paths-bg" id="temoignages">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-tag" data-i18n="test.tag">Ce qu'ils en disent</div>
+        <h2 class="section-title" data-i18n="test.title">Les premiers retours.</h2>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial">
+          <div class="quote-svg" id="quote-1"></div>
+          <p data-i18n="test.1.text">"J'ai compris en 15 minutes ce que ma prof n'a pas réussi à m'expliquer en un trimestre. Le niveau sur la marge brute, c'est juste génial."</p>
+          <div class="person">
+            <div class="avatar">YA</div>
+            <div>
+              <div class="meta-name" data-i18n="test.1.name">Yasmine A.</div>
+              <div class="meta-sub" data-i18n="test.1.sub">17 ans · Tunis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote-svg" id="quote-2"></div>
+          <p data-i18n="test.2.text">"Mon fils n'avait jamais ouvert un livre de business. Maintenant il me parle de coûts fixes et de marges au dîner. Je ne sais plus quoi penser."</p>
+          <div class="person">
+            <div class="avatar">SK</div>
+            <div>
+              <div class="meta-name" data-i18n="test.2.name">Samia K.</div>
+              <div class="meta-sub" data-i18n="test.2.sub">Maman, La Marsa</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="quote-svg" id="quote-3"></div>
+          <p data-i18n="test.3.text">"Le niveau de détection d'anomalies est addictif. Et surtout, j'utilise vraiment ce que j'apprends dans mes projets perso. Ça change tout."</p>
+          <div class="person">
+            <div class="avatar">MH</div>
+            <div>
+              <div class="meta-name" data-i18n="test.3.name">Mehdi H.</div>
+              <div class="meta-sub" data-i18n="test.3.sub">16 ans · Sousse</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="final-cta-inner">
+      <h2 id="cta-title" style="white-space: pre-line;">Prêt à devenir
+plus autonome ?</h2>
+      <p data-i18n="cta.sub">Pas d'inscription. Pas de carte bancaire. Juste un clic et un parcours qui te ressemble.</p>
+      <a href="#parcours" class="btn btn-primary btn-xl" style="background: var(--color-accent);" data-i18n="cta.btn">Commencer mon premier niveau</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="brand">
+          <span class="brand-mark"><img src="assets/squirrel-mascot.svg" alt="Questify"/></span>
+          Questify
+        </a>
+        <p data-i18n="footer.tagline">Un chemin gamifié vers l'autonomie, pensé pour les lycéens tunisiens.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.product">Produit</h4>
+        <a href="#parcours" data-i18n="paths.business.title">Parcours Business</a>
+        <a href="#parcours" data-i18n="paths.data.title">Parcours Data</a>
+        <a href="#comment" data-i18n="nav.how">Comment ça marche</a>
+        <a href="#temoignages" data-i18n="nav.testimonials">Témoignages</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.learn">Apprendre</h4>
+        <a href="paths/business.html" data-i18n="paths.business.title">Lancer ta marque</a>
+        <a href="paths/data.html" data-i18n="paths.data.title">Analyser comme un pro</a>
+        <a href="#" data-i18n="soon.finance">Finance personnelle (bientôt)</a>
+        <a href="#" data-i18n="soon.negotiation">Négociation (bientôt)</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.about">À propos</h4>
+        <a href="#" data-i18n="footer.mission">Notre mission</a>
+        <a href="#" data-i18n="footer.teachers">Pour les enseignants</a>
+        <a href="#" data-i18n="footer.contact">Contact</a>
+        <a href="#" data-i18n="footer.legal">Mentions légales</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="year"></span> <span data-i18n="footer.copy">Questify · Pensé en Tunisie, pour la Tunisie.</span>
+    </div>
+  </footer>
+
+  <script src="scripts/i18n.js"></script>
+  <script src="scripts/data.js"></script>
+  <script src="scripts/app.js"></script>
+  <script>
+    // Initialize language + flag switcher
+    I18N.init();
+    I18N.injectSwitcher(document.getElementById('lang-switch-mount'));
+
+    function renderMeta() {
+      document.getElementById('hero-arrow').innerHTML = App.icon('arrowRight', 18);
+      document.getElementById('meta-1').innerHTML = App.icon('check', 14) + ' <span>' + I18N.t('hero.meta.free') + '</span>';
+      document.getElementById('meta-2').innerHTML = App.icon('check', 14) + ' <span>' + I18N.t('hero.meta.nosignup') + '</span>';
+      document.getElementById('meta-3').innerHTML = App.icon('check', 14) + ' <span>' + I18N.t('hero.meta.lang') + '</span>';
+      // Float cards
+      document.getElementById('float-1-line').textContent = I18N.t('float.completed');
+      document.getElementById('float-2-line').textContent = I18N.t('float.totalEarned');
+      document.getElementById('float-3-line').textContent = I18N.t('float.margin');
+      document.getElementById('float-1-unit').textContent = I18N.t('float.nuts');
+      document.getElementById('float-2-unit').textContent = I18N.t('float.nuts');
+      // CTA title supports line breaks
+      const ctaT = I18N.t('cta.title').replace(/\n/g, '<br/>');
+      document.getElementById('cta-title').innerHTML = ctaT;
+    }
+    renderMeta();
+
+    document.getElementById('float-1-ico').innerHTML = App.icon('checkCircle', 18);
+    document.getElementById('float-3-ico').innerHTML = App.icon('chart', 18);
+
+    document.getElementById('why-1-ico').innerHTML  = App.icon('gameController', 28);
+    document.getElementById('why-2-ico').innerHTML  = App.icon('target', 28);
+    document.getElementById('why-3-ico').innerHTML  = App.icon('clock', 28);
+
+    document.getElementById('path-business-ico').innerHTML = App.icon('briefcase', 32);
+    document.getElementById('path-data-ico').innerHTML     = App.icon('chart', 32);
+
+    document.getElementById('step-1-ico').innerHTML = App.icon('book', 24);
+    document.getElementById('step-2-ico').innerHTML = App.icon('zap', 24);
+    document.getElementById('step-3-ico').innerHTML = App.icon('star', 24);
+
+    document.getElementById('quote-1').innerHTML = App.icon('quote', 28);
+    document.getElementById('quote-2').innerHTML = App.icon('quote', 28);
+    document.getElementById('quote-3').innerHTML = App.icon('quote', 28);
+
+    // ---------- Float-card animated nut counter ----------
+    const cur = App.getXP();
+    document.getElementById('float-xp').textContent = cur;
+    if (cur === 0) App.rollNumberTo('#float-xp', 0, 120, 1800);
+
+    // ---------- Path level lists ----------
+    function renderPathLevels(pathId, mountId) {
+      const path = PATHS[pathId];
+      const next = App.nextUnlockedLevel(pathId, 5);
+      const mount = document.getElementById(mountId);
+      mount.innerHTML = '';
+      path.levels.forEach(lvl => {
+        const id = `${pathId}-l${lvl.num}`;
+        const done = App.isCompleted(id);
+        const current = !done && lvl.num === next;
+        const row = document.createElement('a');
+        row.href = (done || current) ? `levels/${id}.html` : '#parcours';
+        row.className = 'plvl-row' + (done ? ' done' : '') + (current ? ' current' : '');
+        row.innerHTML = `
+          <span class="plvl-num">${done ? App.icon('check', 14) : 'L' + lvl.num}</span>
+          <span class="plvl-title">${T(lvl.title)}</span>
+          <span class="plvl-xp"><img src="assets/acorn.svg" alt=""/><span data-numeric>${lvl.xp}</span></span>
+        `;
+        mount.appendChild(row);
+      });
+    }
+    function renderStartButtons() {
+      const txt = I18N.t('paths.start');
+      const arrowIcon = I18N.isRTL()
+        ? `<span class="arrow-flip" style="display:inline-flex;">${App.icon('arrowRight', 16)}</span>`
+        : App.icon('arrowRight', 16);
+      document.getElementById('start-business').innerHTML = `<span>${txt}</span> ${arrowIcon}`;
+      document.getElementById('start-data').innerHTML     = `<span>${txt}</span> ${arrowIcon}`;
+    }
+    function refreshAll() {
+      renderPathLevels('business', 'business-levels');
+      renderPathLevels('data',     'data-levels');
+      renderStartButtons();
+      renderMeta();
+    }
+    refreshAll();
+    document.addEventListener('lang:changed', refreshAll);
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

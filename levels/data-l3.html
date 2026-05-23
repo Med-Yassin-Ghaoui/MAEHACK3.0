@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>L3 · Variation en % · Questify</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/design.css"/>
+  <style>
+    .builder {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .step {
+      background: var(--color-surface-card);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
+      transition: all 350ms var(--ease-out-quart);
+    }
+    .step.done {
+      background: var(--color-background-success);
+      border-color: var(--color-text-success);
+    }
+    .step.done .step-num { background: var(--color-text-success); color: white; }
+    .step.locked { opacity: 0.45; pointer-events: none; }
+
+    .step-head {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 14px;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--color-background-secondary);
+      color: var(--color-text-tertiary);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step.active .step-num {
+      background: var(--color-accent);
+      color: white;
+    }
+    .step-type {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .step-enonce {
+      font-size: 16px;
+      color: var(--color-heading);
+      font-weight: 600;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .step-aide {
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+    .answer-row { display: flex; gap: 10px; margin-bottom: 12px; }
+    .answer-row input { flex: 1; padding: 12px 16px; font-size: 16px; font-weight: 600; }
+    .answer-row .unit { display: inline-flex; align-items: center; padding: 0 14px; color: var(--color-text-tertiary); font-weight: 500; }
+    .choices { display: flex; flex-direction: column; gap: 8px; }
+    .choice {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 0.5px solid var(--color-border-tertiary);
+      background: var(--color-surface-card);
+      cursor: pointer;
+      transition: all 180ms;
+      text-align: left;
+      font: inherit;
+      color: var(--color-brown);
+      font-weight: 500;
+    }
+    .choice:hover:not(.locked) { transform: translateY(-1px); border-color: var(--color-border-secondary); }
+    .choice.correct { background: var(--color-background-success); border-color: var(--color-text-success); color: var(--color-text-success); }
+    .choice.wrong   { background: var(--color-background-danger);  border-color: var(--color-border-danger); color: var(--color-text-danger); }
+    .feedback {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+      border-radius: var(--radius);
+      font-size: 14px;
+      display: none;
+    }
+    .feedback.show { display: block; animation: animateIn 300ms; }
+
+    .formula-reveal {
+      background: linear-gradient(135deg, var(--color-brown), var(--color-brown-dark));
+      color: white;
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+    }
+    .formula-reveal.show { display: block; animation: animateIn 400ms; }
+    .formula-reveal h3 { color: white; margin-bottom: 8px; }
+    .formula-reveal .formula {
+      background: rgba(255,255,255,0.1);
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      font-family: monospace;
+      font-size: 16px;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="animate-in" style="margin-bottom: 24px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="badge badge-data" id="lvl-badge">Niveau 3</span>
+        <span class="muted" style="font-size:14px;">Data · Variation en %</span>
+      </div>
+      <h1 class="h1" style="margin-top: 12px;">Réinvente la formule</h1>
+      <p class="lead" style="margin-top: 10px;">Pas de cours. Étape par étape, tu vas redécouvrir comment calculer une variation en %.</p>
+    </header>
+
+    <div class="builder" id="builder" data-stagger></div>
+
+    <div class="formula-reveal" id="formula-reveal">
+      <h3><span id="formula-icon"></span> Tu as réinventé la formule</h3>
+      <div class="formula" id="formula-text"></div>
+      <p style="font-size:14px; opacity:0.85;">C'est exactement comme ça que les analystes, les économistes et les startups mesurent leur croissance.</p>
+      <button class="btn btn-primary btn-pulse" id="finish-btn" style="margin-top: 18px;">Réclamer mes XP →</button>
+    </div>
+  </main>
+
+  <script src="../scripts/data.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script>
+    const LEVEL_ID = 'data-l3';
+    const data = LEVELS[LEVEL_ID];
+
+    App.renderTopbar({ back: '../paths/data.html', title: 'Niveau 3 · Variation %', progressTarget: 0.4 });
+    App.injectMascot('../');
+    document.getElementById('lvl-badge').innerHTML = App.icon('chart', 14) + ' Niveau 3';
+    document.getElementById('formula-icon').innerHTML = App.icon('graduation', 22);
+
+    const wrap = document.getElementById('builder');
+    let activeIdx = 0;
+    let mistakes = 0;
+
+    function renderAll() {
+      wrap.innerHTML = '';
+      data.etapes.forEach((etape, idx) => {
+        const div = document.createElement('div');
+        div.className = 'step animate-in';
+        div.style.setProperty('--i', idx);
+        if (idx < activeIdx) div.classList.add('done');
+        else if (idx === activeIdx) div.classList.add('active');
+        else div.classList.add('locked');
+
+        const labelMap = {
+          observation: 'Observation',
+          ratio: 'Ratio',
+          formule: 'Conversion',
+          application: 'Application',
+          piege: 'Piège classique',
+        };
+
+        let answerHTML = '';
+        if (etape.choix) {
+          answerHTML = `
+            <div class="choices">
+              ${etape.choix.map((c, i) => `<button class="choice" data-i="${i}">${c.texte}</button>`).join('')}
+            </div>`;
+        } else {
+          const unit = etape.type === 'ratio' ? '' : (etape.type === 'formule' || etape.type === 'application' ? '%' : 'unités');
+          answerHTML = `
+            <div class="answer-row">
+              <input type="number" step="0.001" placeholder="Ta réponse..." data-step="${idx}"/>
+              <span class="unit">${unit}</span>
+              <button class="btn btn-primary check-step" data-step="${idx}">Vérifier</button>
+            </div>`;
+        }
+
+        div.innerHTML = `
+          <div class="step-head">
+            <div class="step-num">${idx + 1}</div>
+            <div>
+              <div class="step-type">${labelMap[etape.type] || ''}</div>
+            </div>
+          </div>
+          <div class="step-enonce">${etape.enonce}</div>
+          ${etape.aide ? `<div class="step-aide">${App.icon('bulb', 14)} ${etape.aide}</div>` : ''}
+          ${answerHTML}
+          <div class="feedback" id="fb-${idx}"></div>
+        `;
+        wrap.appendChild(div);
+      });
+
+      // Wire input checks
+      document.querySelectorAll('.check-step').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = +btn.dataset.step;
+          const input = document.querySelector(`input[data-step="${idx}"]`);
+          checkNumeric(idx, input);
+        });
+      });
+      document.querySelectorAll('input[data-step]').forEach(input => {
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            checkNumeric(+input.dataset.step, input);
+          }
+        });
+      });
+      document.querySelectorAll('.choice[data-i]').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.closest('.step.locked, .step.done')) return;
+          checkChoice(activeIdx, b);
+        });
+      });
+    }
+
+    function checkNumeric(idx, input) {
+      const etape = data.etapes[idx];
+      const val = parseFloat(input.value);
+      if (isNaN(val)) { App.toast('Entre un nombre.', 'danger'); return; }
+      const tol = etape.tolerance || 0.5;
+      const correct = Math.abs(val - etape.reponseCorrecte) <= tol;
+      const fb = document.getElementById(`fb-${idx}`);
+      if (correct) {
+        App.celebrateElement(input.parentElement);
+        fb.textContent = etape.feedback;
+        fb.classList.add('show');
+        App.addXP(4);
+        advance();
+      } else {
+        App.shakeElement(input.parentElement);
+        fb.textContent = `Pas tout à fait. ${etape.aide || ''}`;
+        fb.classList.add('show');
+        mistakes++;
+      }
+    }
+
+    function checkChoice(idx, btn) {
+      const etape = data.etapes[idx];
+      const ci = +btn.dataset.i;
+      const choice = etape.choix[ci];
+      document.querySelectorAll(`.step:nth-child(${idx+1}) .choice`).forEach(b => {
+        b.classList.add('locked');
+        const i = +b.dataset.i;
+        if (etape.choix[i].correct) b.classList.add('correct');
+      });
+      const fb = document.getElementById(`fb-${idx}`);
+      if (choice.correct) {
+        App.celebrateElement(btn);
+        fb.textContent = etape.feedback;
+        App.addXP(4);
+        advance();
+      } else {
+        btn.classList.add('wrong');
+        App.shakeElement(btn);
+        fb.textContent = etape.feedback;
+        mistakes++;
+      }
+      fb.classList.add('show');
+    }
+
+    function advance() {
+      activeIdx++;
+      if (activeIdx >= data.etapes.length) {
+        document.getElementById('formula-text').textContent = data.formuleRevee;
+        document.getElementById('formula-reveal').classList.add('show');
+        App.mascot('flip');
+        App.confettiBurst(window.innerWidth/2, window.innerHeight/2 + 100, 24);
+        setTimeout(() => document.getElementById('formula-reveal').scrollIntoView({ behavior: 'smooth' }), 200);
+        return;
+      }
+      // re-render only the next step (unlock it)
+      renderAll();
+      // re-show all previous feedbacks
+      data.etapes.forEach((e, i) => {
+        if (i < activeIdx) {
+          const fb = document.getElementById(`fb-${i}`);
+          if (fb) { fb.textContent = e.feedback; fb.classList.add('show'); }
+        }
+      });
+      setTimeout(() => {
+        const next = wrap.children[activeIdx];
+        if (next) next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
+
+    document.getElementById('finish-btn').addEventListener('click', () => {
+      const stars = mistakes === 0 ? 3 : (mistakes <= 2 ? 2 : 1);
+      const bonus = mistakes === 0 ? 8 : 0;
+      App.showLevelComplete({
+        levelId: LEVEL_ID,
+        xpEarned: bonus,
+        stars,
+        insight: "La variation en % te permet de comparer des choses très différentes. Une chute de 44 unités sur 178 (-25%) est beaucoup plus grave que -44 unités sur 1000 (-4%).",
+        nextHref: '../paths/data.html',
+      });
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
