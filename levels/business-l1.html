@@ -1,161 +1,197 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>L1 · C'est quoi un coût ? · Questify</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles/design.css"/>
-  <style>
-    .scenario {
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 32px;
-      align-items: start;
-    }
-    .bottle-card {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      text-align: center;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .bottle-art {
-      font-size: 88px;
-      line-height: 1;
-      margin-bottom: 12px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-    }
-    .element {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      cursor: pointer;
-      transition: all 200ms var(--ease-out-quart);
-      display: flex; align-items: center; gap: 12px;
-      font-weight: 500;
-      color: var(--color-brown);
-    }
-    .element:hover {
-      transform: translateY(-2px);
-      border-color: var(--color-border-secondary);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    }
-    .element.selected {
-      background: linear-gradient(135deg, #fff1de, #ffe6c2);
-      border-color: var(--color-accent);
-    }
-    .element .check-box {
-      width: 22px; height: 22px;
-      border-radius: 6px;
-      border: 1.5px solid var(--color-border-secondary);
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 180ms;
-    }
-    .element.selected .check-box {
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-      color: white;
-    }
-    .element .check-box svg { display: none; }
-    .element.selected .check-box svg { display: block; }
-    .element.reveal-correct {
-      background: var(--color-background-success) !important;
-      border-color: var(--color-text-success) !important;
-      color: var(--color-text-success) !important;
-    }
-    .element.reveal-wrong {
-      background: var(--color-background-danger) !important;
-      border-color: var(--color-border-danger) !important;
-      color: var(--color-text-danger) !important;
-    }
-    .element.reveal-missed {
-      border-color: var(--color-border-danger) !important;
-      border-style: dashed !important;
-    }
-    .explanation {
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--color-text-secondary);
-      font-weight: 400;
-      display: none;
-    }
-    .element.revealed .explanation { display: block; }
-
-    .actions {
-      margin-top: 28px;
-      display: flex; gap: 12px; flex-wrap: wrap;
-    }
-    @media (max-width: 720px) {
-      .scenario { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/design.css" />
+    <style>
+        .scenario {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+        
+        .bottle-card {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .bottle-art {
+            font-size: 88px;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        
+        .element {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            cursor: pointer;
+            transition: all 200ms var(--ease-out-quart);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            color: var(--color-brown);
+        }
+        
+        .element:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-border-secondary);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+        
+        .element.selected {
+            background: linear-gradient(135deg, #fff1de, #ffe6c2);
+            border-color: var(--color-accent);
+        }
+        
+        .element .check-box {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 1.5px solid var(--color-border-secondary);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 180ms;
+        }
+        
+        .element.selected .check-box {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: white;
+        }
+        
+        .element .check-box svg {
+            display: none;
+        }
+        
+        .element.selected .check-box svg {
+            display: block;
+        }
+        
+        .element.reveal-correct {
+            background: var(--color-background-success) !important;
+            border-color: var(--color-text-success) !important;
+            color: var(--color-text-success) !important;
+        }
+        
+        .element.reveal-wrong {
+            background: var(--color-background-danger) !important;
+            border-color: var(--color-border-danger) !important;
+            color: var(--color-text-danger) !important;
+        }
+        
+        .element.reveal-missed {
+            border-color: var(--color-border-danger) !important;
+            border-style: dashed !important;
+        }
+        
+        .explanation {
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            font-weight: 400;
+            display: none;
+        }
+        
+        .element.revealed .explanation {
+            display: block;
+        }
+        
+        .actions {
+            margin-top: 28px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 720px) {
+            .scenario {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <main class="container">
-    <header class="animate-in" style="margin-bottom: 28px;">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span class="badge badge-business" id="lvl-badge">Niveau 1</span>
-        <span class="muted" style="font-size: 14px;">Business · C'est quoi un coût ?</span>
-      </div>
-      <h1 class="h1" style="margin-top: 14px;">C'est quoi un coût ?</h1>
-    </header>
+    <main class="container">
+        <header class="animate-in" style="margin-bottom: 28px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge badge-business" id="lvl-badge">مستوى 1</span>
+                <span class="muted" style="font-size: 14px;">بيزنس · شنوّا هي التكلفة ؟</span>
+            </div>
+            <h1 class="h1" style="margin-top: 14px;">شنوّا هي التكلفة ؟</h1>
+        </header>
 
-    <section class="scenario animate-in" style="--i:1;">
-      <div class="bottle-card">
-        <div class="bottle-art" id="bottle-icon" style="color: var(--color-accent);"></div>
-        <h3 class="h3">Ton parfum</h3>
-        <p class="muted" style="font-size: 14px; margin-top: 6px;">Une bouteille. Plusieurs charges. Lesquelles sont vraiment des coûts ?</p>
-      </div>
+        <section class="scenario animate-in" style="--i:1;">
+            <div class="bottle-card">
+                <div class="bottle-art" id="bottle-icon" style="color: var(--color-accent);"></div>
+                <h3 class="h3">البارفان متاعك</h3>
+                <p class="muted" style="font-size: 14px; margin-top: 6px;">دبوزة وحدة. برشا مصاريف. شكون فيهم تكلفة بالرسمي ؟</p>
+            </div>
 
-      <div>
-        <p class="lead" id="intro" style="margin-bottom: 20px;"></p>
-        <p style="font-weight: 600; color: var(--color-heading); margin-bottom: 16px;" id="question"></p>
-        <div class="grid" id="elements" data-stagger></div>
-        <div class="actions">
-          <button class="btn btn-primary" id="submit-btn">Valider mes choix</button>
-          <a href="../paths/business.html" class="btn btn-ghost">← Quitter</a>
-        </div>
-      </div>
-    </section>
-  </main>
+            <div>
+                <p class="lead" id="intro" style="margin-bottom: 20px;"></p>
+                <p style="font-weight: 600; color: var(--color-heading); margin-bottom: 16px;" id="question"></p>
+                <div class="grid" id="elements" data-stagger></div>
+                <div class="actions">
+                    <button class="btn btn-primary" id="submit-btn">صحّح إختياراتي</button>
+                    <a href="../paths/business.html" class="btn btn-ghost">← رجوع</a>
+                </div>
+            </div>
+        </section>
+    </main>
 
-  <script src="../scripts/data.js"></script>
-  <script src="../scripts/app.js"></script>
-  <script>
-    const LEVEL_ID = 'business-l1';
-    const data = LEVELS[LEVEL_ID];
+    <script src="../scripts/data.js"></script>
+    <script src="../scripts/app.js"></script>
+    <script>
+        const LEVEL_ID = 'business-l1';
+        const data = LEVELS[LEVEL_ID];
 
-    App.renderTopbar({
-      back: '../paths/business.html',
-      title: 'Niveau 1 · Coûts',
-      progressTarget: 0,
-    });
-    App.injectMascot('../');
-    document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' Niveau 1';
-    document.getElementById('bottle-icon').innerHTML = App.icon('flower', 88);
+        App.renderTopbar({
+            back: '../paths/business.html',
+            title: 'مستوى 1 · تكاليف',
+            progressTarget: 0,
+        });
+        App.injectMascot('../');
+        document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' مستوى 1';
+        document.getElementById('bottle-icon').innerHTML = App.icon('flower', 88);
 
-    document.getElementById('intro').textContent = data.intro;
-    document.getElementById('question').textContent = data.question;
+        document.getElementById('intro').textContent = data.intro;
+        document.getElementById('question').textContent = data.question;
 
-    const wrap = document.getElementById('elements');
-    const state = { selected: new Set(), revealed: false };
+        const wrap = document.getElementById('elements');
+        const state = {
+            selected: new Set(),
+            revealed: false
+        };
 
-    data.elements.forEach((el, idx) => {
-      const card = document.createElement('div');
-      card.className = 'element animate-in';
-      card.style.setProperty('--i', idx);
-      card.dataset.idx = idx;
-      card.innerHTML = `
+        data.elements.forEach((el, idx) => {
+            const card = document.createElement('div');
+            card.className = 'element animate-in';
+            card.style.setProperty('--i', idx);
+            card.dataset.idx = idx;
+            card.innerHTML = `
         <div class="check-box">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
         </div>
@@ -164,85 +200,88 @@
           <div class="explanation">${el.explication}</div>
         </div>
       `;
-      card.addEventListener('click', () => {
-        if (state.revealed) return;
-        const i = +card.dataset.idx;
-        if (state.selected.has(i)) {
-          state.selected.delete(i);
-          card.classList.remove('selected');
-        } else {
-          state.selected.add(i);
-          card.classList.add('selected');
+            card.addEventListener('click', () => {
+                if (state.revealed) return;
+                const i = +card.dataset.idx;
+                if (state.selected.has(i)) {
+                    state.selected.delete(i);
+                    card.classList.remove('selected');
+                } else {
+                    state.selected.add(i);
+                    card.classList.add('selected');
+                }
+            });
+            wrap.appendChild(card);
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', validate);
+
+        function validate() {
+            if (state.revealed) {
+                finish();
+                return;
+            }
+            state.revealed = true;
+            const cards = wrap.querySelectorAll('.element');
+            let correctSelected = 0,
+                wrongSelected = 0,
+                missed = 0;
+            const totalCorrect = data.elements.filter(e => e.estUnCout).length;
+
+            cards.forEach((card, idx) => {
+                const el = data.elements[idx];
+                card.classList.add('revealed');
+                const chose = state.selected.has(idx);
+                if (chose && el.estUnCout) {
+                    card.classList.add('reveal-correct');
+                    correctSelected++;
+                } else if (chose && !el.estUnCout) {
+                    card.classList.add('reveal-wrong');
+                    wrongSelected++;
+                } else if (!chose && el.estUnCout) {
+                    card.classList.add('reveal-missed');
+                    missed++;
+                }
+            });
+
+            const perfect = correctSelected === totalCorrect && wrongSelected === 0;
+            const stars = perfect ? 3 : (correctSelected >= totalCorrect - 1 && wrongSelected <= 1 ? 2 : 1);
+            const xp = perfect ? 10 + 20 : (stars === 2 ? 10 : 5);
+            state.xp = xp;
+            state.stars = stars;
+
+            if (perfect) {
+                App.toast(data.feedbackSucces, 'success');
+                App.mascot('flip');
+                // burst confetti from each correct card
+                setTimeout(() => {
+                    wrap.querySelectorAll('.reveal-correct').forEach((c, i) => {
+                        setTimeout(() => {
+                            const r = c.getBoundingClientRect();
+                            App.confettiBurst(r.left + r.width / 2, r.top + r.height / 2, 8);
+                        }, i * 90);
+                    });
+                }, 200);
+            } else {
+                App.toast(data.feedbackEchec, 'danger');
+                App.mascot('sad');
+            }
+
+            const btn = document.getElementById('submit-btn');
+            btn.textContent = 'كمّل →';
+            btn.classList.add('btn-pulse');
         }
-      });
-      wrap.appendChild(card);
-    });
 
-    document.getElementById('submit-btn').addEventListener('click', validate);
-
-    function validate() {
-      if (state.revealed) {
-        finish();
-        return;
-      }
-      state.revealed = true;
-      const cards = wrap.querySelectorAll('.element');
-      let correctSelected = 0, wrongSelected = 0, missed = 0;
-      const totalCorrect = data.elements.filter(e => e.estUnCout).length;
-
-      cards.forEach((card, idx) => {
-        const el = data.elements[idx];
-        card.classList.add('revealed');
-        const chose = state.selected.has(idx);
-        if (chose && el.estUnCout) {
-          card.classList.add('reveal-correct');
-          correctSelected++;
-        } else if (chose && !el.estUnCout) {
-          card.classList.add('reveal-wrong');
-          wrongSelected++;
-        } else if (!chose && el.estUnCout) {
-          card.classList.add('reveal-missed');
-          missed++;
+        function finish() {
+            App.showLevelComplete({
+                levelId: LEVEL_ID,
+                xpEarned: state.xp,
+                stars: state.stars,
+                insight: data.feedbackSucces + " التكلفة هي أي حاجة تستهلك موارد باش تتصنع.",
+                nextHref: '../paths/business.html',
+            });
         }
-      });
-
-      const perfect = correctSelected === totalCorrect && wrongSelected === 0;
-      const stars = perfect ? 3 : (correctSelected >= totalCorrect - 1 && wrongSelected <= 1 ? 2 : 1);
-      const xp = perfect ? 10 + 20 : (stars === 2 ? 10 : 5);
-      state.xp = xp;
-      state.stars = stars;
-
-      if (perfect) {
-        App.toast(data.feedbackSucces, 'success');
-        App.mascot('flip');
-        // burst confetti from each correct card
-        setTimeout(() => {
-          wrap.querySelectorAll('.reveal-correct').forEach((c, i) => {
-            setTimeout(() => {
-              const r = c.getBoundingClientRect();
-              App.confettiBurst(r.left + r.width/2, r.top + r.height/2, 8);
-            }, i * 90);
-          });
-        }, 200);
-      } else {
-        App.toast(data.feedbackEchec, 'danger');
-        App.mascot('sad');
-      }
-
-      const btn = document.getElementById('submit-btn');
-      btn.textContent = 'Continuer →';
-      btn.classList.add('btn-pulse');
-    }
-
-    function finish() {
-      App.showLevelComplete({
-        levelId: LEVEL_ID,
-        xpEarned: state.xp,
-        stars: state.stars,
-        insight: data.feedbackSucces + " Un coût, c'est tout ce qui consomme des ressources pour fabriquer.",
-        nextHref: '../paths/business.html',
-      });
-    }
-  </script>
+    </script>
 </body>
+
 </html>

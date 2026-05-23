@@ -1,199 +1,269 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>L4 · Détecter des anomalies · Questify</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles/design.css"/>
-  <style>
-    .hud {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 22px;
-    }
-    .hud-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: 999px;
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--color-brown);
-      box-shadow: 0 1px 3px rgba(92,44,14,0.05);
-    }
-    .hud-pill .label { color: var(--color-text-tertiary); font-weight: 500; }
-    .hud-pill.timer { color: var(--color-text-info); }
-    .hud-pill.timer.danger { color: var(--color-text-danger); animation: pulse 1s infinite; }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%      { opacity: 0.5; }
-    }
-
-    .table-wrap {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    th, td {
-      padding: 12px 14px;
-      text-align: left;
-      border-bottom: 0.5px solid var(--color-border-tertiary);
-    }
-    th {
-      background: var(--color-background-secondary);
-      color: var(--color-text-tertiary);
-      font-weight: 600;
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      position: sticky;
-      top: 0;
-    }
-    tr {
-      cursor: pointer;
-      transition: background 120ms;
-    }
-    tr:hover:not(.locked) { background: rgba(232,119,34,0.04); }
-    tr.flagged {
-      background: rgba(232,119,34,0.12);
-      box-shadow: inset 4px 0 0 var(--color-accent);
-    }
-    tr.confirmed-good {
-      background: var(--color-background-success);
-      color: var(--color-text-success);
-      cursor: default;
-    }
-    tr.confirmed-bad {
-      background: var(--color-background-danger);
-      color: var(--color-text-danger);
-      cursor: default;
-    }
-    tr.locked { cursor: default; }
-    td.qty-neg { color: var(--color-text-danger); font-weight: 600; }
-    td.qty-text { font-style: italic; color: var(--color-text-danger); }
-    td.qty-huge { font-weight: 700; color: var(--color-text-danger); }
-
-    .actions {
-      margin-top: 22px;
-      display: flex; gap: 12px; flex-wrap: wrap;
-    }
-    .explanations {
-      margin-top: 24px;
-    }
-    .explanations h3 { margin-bottom: 12px; color: var(--color-heading); }
-    .anomaly-row {
-      background: var(--color-surface-card);
-      border-left: 4px solid var(--color-border-danger);
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      border-radius: 0 var(--radius) var(--radius) 0;
-      font-size: 14px;
-    }
-    .anomaly-row .type {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--color-text-danger);
-      background: var(--color-background-danger);
-      padding: 2px 8px;
-      border-radius: 999px;
-      margin-bottom: 4px;
-    }
-    .anomaly-row .desc { color: var(--color-text-secondary); margin-top: 4px; }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/design.css" />
+    <style>
+        .hud {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+        
+        .hud-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--color-brown);
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.05);
+        }
+        
+        .hud-pill .label {
+            color: var(--color-text-tertiary);
+            font-weight: 500;
+        }
+        
+        .hud-pill.timer {
+            color: var(--color-text-info);
+        }
+        
+        .hud-pill.timer.danger {
+            color: var(--color-text-danger);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .table-wrap {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th,
+        td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 0.5px solid var(--color-border-tertiary);
+        }
+        
+        th {
+            background: var(--color-background-secondary);
+            color: var(--color-text-tertiary);
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+        }
+        
+        tr {
+            cursor: pointer;
+            transition: background 120ms;
+        }
+        
+        tr:hover:not(.locked) {
+            background: rgba(232, 119, 34, 0.04);
+        }
+        
+        tr.flagged {
+            background: rgba(232, 119, 34, 0.12);
+            box-shadow: inset 4px 0 0 var(--color-accent);
+        }
+        
+        tr.confirmed-good {
+            background: var(--color-background-success);
+            color: var(--color-text-success);
+            cursor: default;
+        }
+        
+        tr.confirmed-bad {
+            background: var(--color-background-danger);
+            color: var(--color-text-danger);
+            cursor: default;
+        }
+        
+        tr.locked {
+            cursor: default;
+        }
+        
+        td.qty-neg {
+            color: var(--color-text-danger);
+            font-weight: 600;
+        }
+        
+        td.qty-text {
+            font-style: italic;
+            color: var(--color-text-danger);
+        }
+        
+        td.qty-huge {
+            font-weight: 700;
+            color: var(--color-text-danger);
+        }
+        
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .explanations {
+            margin-top: 24px;
+        }
+        
+        .explanations h3 {
+            margin-bottom: 12px;
+            color: var(--color-heading);
+        }
+        
+        .anomaly-row {
+            background: var(--color-surface-card);
+            border-left: 4px solid var(--color-border-danger);
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-size: 14px;
+        }
+        
+        .anomaly-row .type {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-danger);
+            background: var(--color-background-danger);
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-bottom: 4px;
+        }
+        
+        .anomaly-row .desc {
+            color: var(--color-text-secondary);
+            margin-top: 4px;
+        }
+    </style>
 </head>
+
 <body>
-  <main class="container">
-    <header class="animate-in" style="margin-bottom: 22px;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span class="badge badge-data" id="lvl-badge">Niveau 4</span>
-        <span class="muted" style="font-size:14px;">Data · Détecter les anomalies</span>
-      </div>
-      <h1 class="h1" style="margin-top: 12px;">Trouve les 4 erreurs</h1>
-      <p class="lead" style="margin-top: 10px;" id="instructions"></p>
-    </header>
+    <main class="container">
+        <header class="animate-in" style="margin-bottom: 22px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span class="badge badge-data" id="lvl-badge">مستوى 4</span>
+                <span class="muted" style="font-size:14px;">داتا · كشف الغلطات</span>
+            </div>
+            <h1 class="h1" style="margin-top: 12px;">لقى 4 الغلطات</h1>
+            <p class="lead" style="margin-top: 10px;" id="instructions"></p>
+        </header>
 
-    <div class="hud animate-in" style="--i:1;">
-      <span class="hud-pill timer" id="timer-pill">
-        <span class="label" id="label-timer">Temps</span>
-        <span id="timer">3:00</span>
-      </span>
-      <span class="hud-pill">
-        <span class="label" id="label-found">Trouvées</span>
-        <span id="found-count">0 / 4</span>
-      </span>
-      <span class="hud-pill">
-        <span class="label" id="label-xp">XP gagnés</span>
-        <span id="xp-this">0</span>
-      </span>
-    </div>
+        <div class="hud animate-in" style="--i:1;">
+            <span class="hud-pill timer" id="timer-pill">
+        <span class="label" id="label-timer">الوقت</span>
+            <span id="timer">3:00</span>
+            </span>
+            <span class="hud-pill">
+        <span class="label" id="label-found">تلقاو</span>
+            <span id="found-count">0 / 4</span>
+            </span>
+            <span class="hud-pill">
+        <span class="label" id="label-xp">حبّات جوز</span>
+            <span id="xp-this">0</span>
+            </span>
+        </div>
 
-    <div class="table-wrap animate-in" style="--i:2;">
-      <table>
-        <thead>
-          <tr><th>#</th><th>Date</th><th>Produit</th><th>Quantité</th><th>Prix unit.</th><th>Total</th></tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
+        <div class="table-wrap animate-in" style="--i:2;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>تاريخ</th>
+                        <th>برودوي</th>
+                        <th>كمية</th>
+                        <th>السوم للوحدة</th>
+                        <th>المجموع</th>
+                    </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+        </div>
 
-    <div class="actions">
-      <button class="btn btn-primary" id="submit-btn">Soumettre mes signalements</button>
-      <a href="../paths/data.html" class="btn btn-ghost">← Quitter</a>
-    </div>
+        <div class="actions">
+            <button class="btn btn-primary" id="submit-btn">إبعت التبليغات متاعي</button>
+            <a href="../paths/data.html" class="btn btn-ghost">← رجوع</a>
+        </div>
 
-    <section class="explanations" id="explanations" style="display:none;">
-      <h3>Voici les 4 anomalies — et pourquoi</h3>
-      <div id="anomaly-list"></div>
-    </section>
-  </main>
+        <section class="explanations" id="explanations" style="display:none;">
+            <h3>هاوما 4 الغلطات — وعلاش</h3>
+            <div id="anomaly-list"></div>
+        </section>
+    </main>
 
-  <script src="../scripts/data.js"></script>
-  <script src="../scripts/app.js"></script>
-  <script>
-    const LEVEL_ID = 'data-l4';
-    const data = LEVELS[LEVEL_ID];
+    <script src="../scripts/data.js"></script>
+    <script src="../scripts/app.js"></script>
+    <script>
+        const LEVEL_ID = 'data-l4';
+        const data = LEVELS[LEVEL_ID];
 
-    App.renderTopbar({ back: '../paths/data.html', title: 'Niveau 4 · Anomalies', progressTarget: 0 });
-    App.injectMascot('../');
-    document.getElementById('lvl-badge').innerHTML = App.icon('chart', 14) + ' Niveau 4';
-    document.getElementById('label-timer').innerHTML = App.icon('clock', 12) + ' Temps';
-    document.getElementById('label-found').innerHTML = App.icon('flag', 12) + ' Trouvées';
-    document.getElementById('label-xp').innerHTML = '<img src="../assets/acorn.svg" alt="" style="width:14px;height:14px;vertical-align:-3px;"/> XP gagnés';
+        App.renderTopbar({
+            back: '../paths/data.html',
+            title: 'مستوى 4 · غلطات',
+            progressTarget: 0
+        });
+        App.injectMascot('../');
+        document.getElementById('lvl-badge').innerHTML = App.icon('chart', 14) + ' مستوى 4';
+        document.getElementById('label-timer').innerHTML = App.icon('clock', 12) + ' الوقت';
+        document.getElementById('label-found').innerHTML = App.icon('flag', 12) + ' تلقاو';
+        document.getElementById('label-xp').innerHTML = '<img src="../assets/acorn.svg" alt="" style="width:14px;height:14px;vertical-align:-3px;"/> حبّات جوز';
 
-    document.getElementById('instructions').textContent = data.instructions;
+        document.getElementById('instructions').textContent = data.instructions;
 
-    // ---------- Build table ----------
-    const tbody = document.getElementById('rows');
-    const flagged = new Set();
-    let submitted = false;
+        // ---------- Build table ----------
+        const tbody = document.getElementById('rows');
+        const flagged = new Set();
+        let submitted = false;
 
-    function rowQtyClass(entry) {
-      if (typeof entry.quantite === 'string') return 'qty-text';
-      if (entry.quantite < 0) return 'qty-neg';
-      if (entry.quantite > 200) return 'qty-huge';
-      return '';
-    }
+        function rowQtyClass(entry) {
+            if (typeof entry.quantite === 'string') return 'qty-text';
+            if (entry.quantite < 0) return 'qty-neg';
+            if (entry.quantite > 200) return 'qty-huge';
+            return '';
+        }
 
-    data.entrees.forEach(e => {
-      const tr = document.createElement('tr');
-      tr.dataset.id = e.id;
-      tr.innerHTML = `
+        data.entrees.forEach(e => {
+            const tr = document.createElement('tr');
+            tr.dataset.id = e.id;
+            tr.innerHTML = `
         <td>${e.id}</td>
         <td>${e.date}</td>
         <td>${e.produit}</td>
@@ -201,119 +271,126 @@
         <td>${e.prixUnitaire} TND</td>
         <td>${e.total} TND</td>
       `;
-      tr.addEventListener('click', () => {
-        if (submitted) return;
-        if (flagged.has(e.id)) {
-          flagged.delete(e.id);
-          tr.classList.remove('flagged');
-        } else {
-          flagged.add(e.id);
-          tr.classList.add('flagged');
+            tr.addEventListener('click', () => {
+                if (submitted) return;
+                if (flagged.has(e.id)) {
+                    flagged.delete(e.id);
+                    tr.classList.remove('flagged');
+                } else {
+                    flagged.add(e.id);
+                    tr.classList.add('flagged');
+                }
+                updateFoundCount();
+            });
+            tbody.appendChild(tr);
+        });
+
+        function updateFoundCount() {
+            document.getElementById('found-count').textContent = `${flagged.size} / 4`;
         }
-        updateFoundCount();
-      });
-      tbody.appendChild(tr);
-    });
 
-    function updateFoundCount() {
-      document.getElementById('found-count').textContent = `${flagged.size} / 4`;
-    }
+        // ---------- Timer ----------
+        let timeLeft = data.timer;
 
-    // ---------- Timer ----------
-    let timeLeft = data.timer;
-    function renderTimer() {
-      const m = Math.floor(timeLeft / 60);
-      const s = String(timeLeft % 60).padStart(2, '0');
-      document.getElementById('timer').textContent = `${m}:${s}`;
-      const pill = document.getElementById('timer-pill');
-      if (timeLeft <= 30) pill.classList.add('danger');
-    }
-    renderTimer();
-    const timerInt = setInterval(() => {
-      timeLeft--;
-      renderTimer();
-      if (timeLeft <= 0) {
-        clearInterval(timerInt);
-        if (!submitted) submit();
-      }
-    }, 1000);
-
-    // ---------- Submit ----------
-    document.getElementById('submit-btn').addEventListener('click', submit);
-
-    function submit() {
-      if (submitted) return;
-      submitted = true;
-      clearInterval(timerInt);
-
-      const trueAnomalies = new Set(data.entrees.filter(e => e.anomalie).map(e => e.id));
-      let correctFlags = 0, falseFlags = 0, missed = 0;
-
-      tbody.querySelectorAll('tr').forEach(tr => {
-        tr.classList.add('locked');
-        const id = parseInt(tr.dataset.id, 10);
-        const isAnomaly = trueAnomalies.has(id);
-        const wasFlagged = flagged.has(id);
-
-        if (wasFlagged && isAnomaly) {
-          tr.classList.remove('flagged');
-          tr.classList.add('confirmed-bad');
-          correctFlags++;
-          App.celebrateElement(tr);
-        } else if (wasFlagged && !isAnomaly) {
-          tr.classList.remove('flagged');
-          tr.classList.add('confirmed-good');
-          falseFlags++;
-        } else if (!wasFlagged && isAnomaly) {
-          tr.classList.add('confirmed-bad');
-          missed++;
+        function renderTimer() {
+            const m = Math.floor(timeLeft / 60);
+            const s = String(timeLeft % 60).padStart(2, '0');
+            document.getElementById('timer').textContent = `${m}:${s}`;
+            const pill = document.getElementById('timer-pill');
+            if (timeLeft <= 30) pill.classList.add('danger');
         }
-      });
+        renderTimer();
+        const timerInt = setInterval(() => {
+            timeLeft--;
+            renderTimer();
+            if (timeLeft <= 0) {
+                clearInterval(timerInt);
+                if (!submitted) submit();
+            }
+        }, 1000);
 
-      // Show explanations
-      const expWrap = document.getElementById('explanations');
-      const list = document.getElementById('anomaly-list');
-      list.innerHTML = '';
-      data.entrees.filter(e => e.anomalie).forEach(e => {
-        const div = document.createElement('div');
-        div.className = 'anomaly-row';
-        div.innerHTML = `
+        // ---------- Submit ----------
+        document.getElementById('submit-btn').addEventListener('click', submit);
+
+        function submit() {
+            if (submitted) return;
+            submitted = true;
+            clearInterval(timerInt);
+
+            const trueAnomalies = new Set(data.entrees.filter(e => e.anomalie).map(e => e.id));
+            let correctFlags = 0,
+                falseFlags = 0,
+                missed = 0;
+
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.classList.add('locked');
+                const id = parseInt(tr.dataset.id, 10);
+                const isAnomaly = trueAnomalies.has(id);
+                const wasFlagged = flagged.has(id);
+
+                if (wasFlagged && isAnomaly) {
+                    tr.classList.remove('flagged');
+                    tr.classList.add('confirmed-bad');
+                    correctFlags++;
+                    App.celebrateElement(tr);
+                } else if (wasFlagged && !isAnomaly) {
+                    tr.classList.remove('flagged');
+                    tr.classList.add('confirmed-good');
+                    falseFlags++;
+                } else if (!wasFlagged && isAnomaly) {
+                    tr.classList.add('confirmed-bad');
+                    missed++;
+                }
+            });
+
+            // Show explanations
+            const expWrap = document.getElementById('explanations');
+            const list = document.getElementById('anomaly-list');
+            list.innerHTML = '';
+            data.entrees.filter(e => e.anomalie).forEach(e => {
+                const div = document.createElement('div');
+                div.className = 'anomaly-row';
+                div.innerHTML = `
           <span class="type">${e.type}</span>
           <strong>Ligne ${e.id} · ${e.produit} (${e.date}) · qty = ${e.quantite}</strong>
           <div class="desc">${e.explication}</div>
         `;
-        list.appendChild(div);
-      });
-      expWrap.style.display = '';
+                list.appendChild(div);
+            });
+            expWrap.style.display = '';
 
-      const perfect = correctFlags === 4 && falseFlags === 0;
-      const stars = perfect ? 3 : (correctFlags >= 3 ? 2 : 1);
-      const xp = perfect ? 25 + 10 : (correctFlags * 6 - falseFlags * 2);
-      document.getElementById('xp-this').textContent = Math.max(0, xp);
+            const perfect = correctFlags === 4 && falseFlags === 0;
+            const stars = perfect ? 3 : (correctFlags >= 3 ? 2 : 1);
+            const xp = perfect ? 25 + 10 : (correctFlags * 6 - falseFlags * 2);
+            document.getElementById('xp-this').textContent = Math.max(0, xp);
 
-      App.toast(
-        perfect ? "Quatre sur quatre — sans faux positif. Parfait." :
-        correctFlags >= 3 ? "Presque ! Regarde les explications." :
-        "Quelques anomalies t'ont échappé.",
-        perfect ? 'success' : 'danger'
-      );
+            App.toast(
+                perfect ? "Quatre sur quatre — sans faux positif. Parfait." :
+                correctFlags >= 3 ? "Presque ! Regarde les explications." :
+                "Quelques anomalies t'ont échappé.",
+                perfect ? 'success' : 'danger'
+            );
 
-      const btn = document.getElementById('submit-btn');
-      btn.textContent = 'Continuer →';
-      btn.classList.add('btn-pulse');
-      btn.removeEventListener('click', submit);
-      btn.addEventListener('click', () => {
-        App.showLevelComplete({
-          levelId: LEVEL_ID,
-          xpEarned: Math.max(0, xp),
-          stars,
-          insight: "Détecter des anomalies, c'est un super-pouvoir d'analyste. Une donnée bizarre = soit une erreur de saisie, soit une histoire à creuser.",
-          nextHref: '../paths/data.html',
-        });
-      });
+            const btn = document.getElementById('submit-btn');
+            btn.textContent = '???? →';
+            btn.classList.add('btn-pulse');
+            btn.removeEventListener('click', submit);
+            btn.addEventListener('click', () => {
+                App.showLevelComplete({
+                    levelId: LEVEL_ID,
+                    xpEarned: Math.max(0, xp),
+                    stars,
+                    insight: "Détecter des anomalies, c'est un super-pouvoir d'analyste. Une donnée bizarre = soit une erreur de saisie, soit une histoire à creuser.",
+                    nextHref: '../paths/data.html',
+                });
+            });
 
-      setTimeout(() => expWrap.scrollIntoView({ behavior: 'smooth', block: 'start' }), 600);
-    }
-  </script>
+            setTimeout(() => expWrap.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            }), 600);
+        }
+    </script>
 </body>
+
 </html>

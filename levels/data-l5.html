@@ -1,295 +1,437 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>L5 · Rapport pour Sami · Questify</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles/design.css"/>
-  <style>
-    .boss-banner {
-      background: linear-gradient(135deg, var(--color-text-success), #1d6b07);
-      color: white;
-      padding: 28px;
-      border-radius: var(--radius-lg);
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-    .boss-banner .chart-bg {
-      position: absolute;
-      right: 28px; top: 50%;
-      transform: translateY(-50%);
-      width: 110px; height: 110px;
-      opacity: 0.18;
-      color: white;
-    }
-    .boss-banner .chart-bg svg { width: 100%; height: 100%; }
-    .boss-banner h1 { color: white; margin-bottom: 6px; }
-    .boss-banner p { color: rgba(255,255,255,0.85); }
-
-    .data-card {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .data-card h3 { color: var(--color-heading); margin-bottom: 14px; }
-
-    .toggle-row {
-      display: flex; gap: 8px; margin-bottom: 14px;
-    }
-    .toggle-btn {
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: var(--color-background-secondary);
-      border: 0.5px solid var(--color-border-tertiary);
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 13px;
-      color: var(--color-brown);
-      transition: all 180ms;
-    }
-    .toggle-btn:hover { background: var(--color-background-tertiary); }
-    .toggle-btn.active {
-      background: var(--color-text-success);
-      color: white;
-      border-color: var(--color-text-success);
-    }
-
-    .chart-svg { width: 100%; display: block; }
-    .axis-label { font-size: 11px; fill: var(--color-text-secondary); font-weight: 500; }
-    .value-label { font-size: 10px; fill: var(--color-brown); font-weight: 600; }
-    .grid-line { stroke: var(--color-border-tertiary); stroke-width: 0.5; stroke-dasharray: 2,2; }
-    .axis-line { stroke: var(--color-border-tertiary); stroke-width: 0.5; }
-    .line-path { fill: none; stroke-width: 2.5; transition: opacity 200ms; }
-    .line-dot { fill: white; stroke-width: 2; }
-
-    .q-section { margin-top: 28px; }
-    .q-section > h2 { color: var(--color-heading); margin-bottom: 4px; }
-    .q-section > p.muted { margin-bottom: 18px; }
-
-    .qcard {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .qcard-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--color-text-success); color: white;
-      font-weight: 700; margin-right: 10px;
-    }
-    .qenonce {
-      font-size: 17px; color: var(--color-heading); font-weight: 600;
-      margin-bottom: 14px;
-    }
-    .answer-card {
-      padding: 14px 16px;
-      border-radius: var(--radius);
-      border: 0.5px solid var(--color-border-tertiary);
-      background: var(--color-background-primary);
-      cursor: pointer;
-      transition: all 180ms;
-      text-align: left; font: inherit;
-      margin-bottom: 8px;
-      display: block; width: 100%;
-    }
-    .answer-card:hover:not(.locked) { transform: translateY(-1px); border-color: var(--color-border-secondary); }
-    .answer-card .choix { font-weight: 600; color: var(--color-brown); margin-bottom: 4px; }
-    .answer-card .just { font-size: 13px; color: var(--color-text-secondary); }
-    .answer-card.correct { background: var(--color-background-success); border-color: var(--color-text-success); }
-    .answer-card.correct .choix { color: var(--color-text-success); }
-    .answer-card.wrong { background: var(--color-background-danger); border-color: var(--color-border-danger); }
-    .answer-card.wrong .choix { color: var(--color-text-danger); }
-    .answer-card.locked { cursor: default; }
-    .nuance {
-      margin-top: 12px;
-      padding: 12px 14px;
-      background: var(--color-background-info);
-      color: var(--color-text-info);
-      border-radius: var(--radius);
-      font-size: 14px;
-      display: none;
-    }
-    .nuance.show { display: block; animation: animateIn 300ms; }
-
-    .insight-final {
-      background: linear-gradient(135deg, var(--color-brown), var(--color-brown-dark));
-      color: white;
-      padding: 24px;
-      border-radius: var(--radius-lg);
-      margin-top: 24px;
-      display: none;
-    }
-    .insight-final.show { display: block; animation: animateIn 400ms; }
-    .insight-final h3 { color: white; }
-  </style>
-</head>
-<body>
-  <main class="container">
-    <div class="boss-banner animate-in">
-      <div class="chart-bg" id="chart-bg"></div>
-      <span class="badge badge-data" style="background: rgba(255,255,255,0.15); color: white; margin-bottom: 10px;" id="lvl-badge">Niveau 5 · Boss</span>
-      <h1 class="h1">Rapport pour Sami</h1>
-      <p>Trois mois de données. Trois questions urgentes. Lis avant de répondre.</p>
-    </div>
-
-    <div class="data-card animate-in" style="--i:1;">
-      <h3>Ventes par produit · 3 mois</h3>
-      <div class="toggle-row" id="toggle-row"></div>
-      <svg class="chart-svg" id="line-chart" viewBox="0 0 600 360"></svg>
-    </div>
-
-    <div class="data-card animate-in" style="--i:2;">
-      <h3>Marge par produit</h3>
-      <svg class="chart-svg" id="margin-chart" viewBox="0 0 600 280"></svg>
-    </div>
-
-    <section class="q-section">
-      <h2 class="h2">Les questions de Sami</h2>
-      <p class="muted">Trois décisions à prendre. Sami compte sur toi.</p>
-      <div id="questions"></div>
-    </section>
-
-    <div class="insight-final" id="insight-final">
-      <h3><span id="lesson-icon"></span> La grosse leçon</h3>
-      <p style="margin-top: 8px;" id="insight-text"></p>
-      <button class="btn btn-primary btn-pulse" id="finish-btn" style="margin-top: 18px; background: var(--color-accent);">Terminer le rapport →</button>
-    </div>
-  </main>
-
-  <script src="../scripts/data.js"></script>
-  <script src="../scripts/app.js"></script>
-  <script>
-    const LEVEL_ID = 'data-l5';
-    const data = LEVELS[LEVEL_ID];
-
-    App.renderTopbar({ back: '../paths/data.html', title: 'Niveau 5 · Boss Data', progressTarget: 0.8 });
-    App.injectMascot('../');
-    document.getElementById('lvl-badge').innerHTML = App.icon('chart', 14) + ' Niveau 5 · Boss';
-    document.getElementById('chart-bg').innerHTML = App.icon('chart', 110);
-    document.getElementById('lesson-icon').innerHTML = App.icon('bulb', 22);
-
-    // ---------- Line chart with togglable products ----------
-    const palette = ['#0C447C', '#E87722', '#27500A', '#7C0C0C', '#5C2C0E', '#9b59b6', '#1D9E75', '#378ADD'];
-    const visible = new Set(['Couscous 1kg', 'Biscuits Samira', 'Eau Safia 1.5L']);
-
-    function renderToggles() {
-      const wrap = document.getElementById('toggle-row');
-      wrap.innerHTML = '';
-      data.produits.forEach((p, i) => {
-        const b = document.createElement('button');
-        b.className = 'toggle-btn' + (visible.has(p) ? ' active' : '');
-        b.style.borderColor = visible.has(p) ? palette[i] : '';
-        if (visible.has(p)) {
-          b.style.background = palette[i];
-          b.style.color = 'white';
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/design.css" />
+    <style>
+        .boss-banner {
+            background: linear-gradient(135deg, var(--color-text-success), #1d6b07);
+            color: white;
+            padding: 28px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
         }
-        b.textContent = p;
-        b.addEventListener('click', () => {
-          if (visible.has(p)) visible.delete(p); else visible.add(p);
-          renderToggles();
-          drawLines();
-        });
-        wrap.appendChild(b);
-      });
-    }
+        
+        .boss-banner .chart-bg {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 110px;
+            height: 110px;
+            opacity: 0.18;
+            color: white;
+        }
+        
+        .boss-banner .chart-bg svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .boss-banner h1 {
+            color: white;
+            margin-bottom: 6px;
+        }
+        
+        .boss-banner p {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .data-card {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .data-card h3 {
+            color: var(--color-heading);
+            margin-bottom: 14px;
+        }
+        
+        .toggle-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        
+        .toggle-btn {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--color-background-secondary);
+            border: 0.5px solid var(--color-border-tertiary);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--color-brown);
+            transition: all 180ms;
+        }
+        
+        .toggle-btn:hover {
+            background: var(--color-background-tertiary);
+        }
+        
+        .toggle-btn.active {
+            background: var(--color-text-success);
+            color: white;
+            border-color: var(--color-text-success);
+        }
+        
+        .chart-svg {
+            width: 100%;
+            display: block;
+        }
+        
+        .axis-label {
+            font-size: 11px;
+            fill: var(--color-text-secondary);
+            font-weight: 500;
+        }
+        
+        .value-label {
+            font-size: 10px;
+            fill: var(--color-brown);
+            font-weight: 600;
+        }
+        
+        .grid-line {
+            stroke: var(--color-border-tertiary);
+            stroke-width: 0.5;
+            stroke-dasharray: 2, 2;
+        }
+        
+        .axis-line {
+            stroke: var(--color-border-tertiary);
+            stroke-width: 0.5;
+        }
+        
+        .line-path {
+            fill: none;
+            stroke-width: 2.5;
+            transition: opacity 200ms;
+        }
+        
+        .line-dot {
+            fill: white;
+            stroke-width: 2;
+        }
+        
+        .q-section {
+            margin-top: 28px;
+        }
+        
+        .q-section>h2 {
+            color: var(--color-heading);
+            margin-bottom: 4px;
+        }
+        
+        .q-section>p.muted {
+            margin-bottom: 18px;
+        }
+        
+        .qcard {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .qcard-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-text-success);
+            color: white;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+        
+        .qenonce {
+            font-size: 17px;
+            color: var(--color-heading);
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+        
+        .answer-card {
+            padding: 14px 16px;
+            border-radius: var(--radius);
+            border: 0.5px solid var(--color-border-tertiary);
+            background: var(--color-background-primary);
+            cursor: pointer;
+            transition: all 180ms;
+            text-align: left;
+            font: inherit;
+            margin-bottom: 8px;
+            display: block;
+            width: 100%;
+        }
+        
+        .answer-card:hover:not(.locked) {
+            transform: translateY(-1px);
+            border-color: var(--color-border-secondary);
+        }
+        
+        .answer-card .choix {
+            font-weight: 600;
+            color: var(--color-brown);
+            margin-bottom: 4px;
+        }
+        
+        .answer-card .just {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+        
+        .answer-card.correct {
+            background: var(--color-background-success);
+            border-color: var(--color-text-success);
+        }
+        
+        .answer-card.correct .choix {
+            color: var(--color-text-success);
+        }
+        
+        .answer-card.wrong {
+            background: var(--color-background-danger);
+            border-color: var(--color-border-danger);
+        }
+        
+        .answer-card.wrong .choix {
+            color: var(--color-text-danger);
+        }
+        
+        .answer-card.locked {
+            cursor: default;
+        }
+        
+        .nuance {
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: var(--color-background-info);
+            color: var(--color-text-info);
+            border-radius: var(--radius);
+            font-size: 14px;
+            display: none;
+        }
+        
+        .nuance.show {
+            display: block;
+            animation: animateIn 300ms;
+        }
+        
+        .insight-final {
+            background: linear-gradient(135deg, var(--color-brown), var(--color-brown-dark));
+            color: white;
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            margin-top: 24px;
+            display: none;
+        }
+        
+        .insight-final.show {
+            display: block;
+            animation: animateIn 400ms;
+        }
+        
+        .insight-final h3 {
+            color: white;
+        }
+    </style>
+</head>
 
-    function drawLines() {
-      const svg = document.getElementById('line-chart');
-      const W = 600, H = 360, padL = 50, padR = 100, padT = 20, padB = 40;
-      const allVals = data.produits.flatMap(p => visible.has(p) ? data.ventes[p] : []);
-      const max = Math.max(50, ...allVals);
-      const niceMax = Math.ceil(max / 50) * 50;
-      const chartW = W - padL - padR;
-      const chartH = H - padT - padB;
+<body>
+    <main class="container">
+        <div class="boss-banner animate-in">
+            <div class="chart-bg" id="chart-bg"></div>
+            <span class="badge badge-data" style="background: rgba(255,255,255,0.15); color: white; margin-bottom: 10px;" id="lvl-badge">مستوى 5 · بوس</span>
+            <h1 class="h1">رابور لسامي</h1>
+            <p>3 شهور داتا. 3 أسئلة مزروبة. إقرا قبل ما تجاوب.</p>
+        </div>
 
-      let html = '';
-      // Grid
-      for (let i = 0; i <= 5; i++) {
-        const y = padT + (i / 5) * chartH;
-        const v = Math.round(niceMax - (i/5) * niceMax);
-        html += `<line class="grid-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"/>`;
-        html += `<text class="axis-label" x="${padL - 6}" y="${y + 4}" text-anchor="end">${v}</text>`;
-      }
-      // X axis labels
-      data.mois.forEach((m, i) => {
-        const x = padL + (i / (data.mois.length - 1)) * chartW;
-        html += `<text class="axis-label" x="${x}" y="${H - padB + 18}" text-anchor="middle">${m}</text>`;
-      });
-      // Lines
-      data.produits.forEach((p, i) => {
-        if (!visible.has(p)) return;
-        const color = palette[i];
-        const points = data.ventes[p].map((v, j) => {
-          const x = padL + (j / (data.mois.length - 1)) * chartW;
-          const y = padT + (1 - v/niceMax) * chartH;
-          return { x, y, v };
-        });
-        const path = points.map((pt, k) => (k === 0 ? 'M' : 'L') + pt.x + ',' + pt.y).join(' ');
-        html += `<path class="line-path" d="${path}" stroke="${color}"/>`;
-        points.forEach(pt => {
-          html += `<circle class="line-dot" cx="${pt.x}" cy="${pt.y}" r="5" stroke="${color}"/>`;
-          html += `<text class="value-label" x="${pt.x + 8}" y="${pt.y - 6}" fill="${color}">${pt.v}</text>`;
-        });
-        // legend at right
-        const legendY = padT + i * 18;
-        html += `<line x1="${W - padR + 14}" y1="${legendY + 4}" x2="${W - padR + 30}" y2="${legendY + 4}" stroke="${color}" stroke-width="2.5"/>`;
-        html += `<text class="axis-label" x="${W - padR + 34}" y="${legendY + 8}" fill="${color}">${p}</text>`;
-      });
-      html += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"/>`;
-      html += `<line class="axis-line" x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}"/>`;
-      svg.innerHTML = html;
-    }
+        <div class="data-card animate-in" style="--i:1;">
+            <h3>مبيعات حسب البرودوي · 3 شهور</h3>
+            <div class="toggle-row" id="toggle-row"></div>
+            <svg class="chart-svg" id="line-chart" viewBox="0 0 600 360"></svg>
+        </div>
 
-    function drawMargins() {
-      const svg = document.getElementById('margin-chart');
-      const W = 600, H = 280, padL = 140, padR = 30, padT = 20, padB = 30;
-      const chartW = W - padL - padR;
-      const barH = (H - padT - padB) / data.produits.length;
-      let html = '';
-      for (let i = 0; i <= 4; i++) {
-        const x = padL + (i / 4) * chartW;
-        html += `<line class="grid-line" x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}"/>`;
-        html += `<text class="axis-label" x="${x}" y="${H - padB + 14}" text-anchor="middle">${Math.round((i/4)*50)}%</text>`;
-      }
-      data.produits.forEach((p, i) => {
-        const y = padT + i * barH + 2;
-        const bh = barH - 8;
-        const marge = data.marges[p];
-        const len = (marge / 0.5) * chartW;
-        const color = palette[i];
-        html += `<text class="axis-label" x="${padL - 6}" y="${y + bh/2 + 4}" text-anchor="end">${p}</text>`;
-        html += `<rect x="${padL}" y="${y}" width="0" height="${bh}" fill="${color}" opacity="0.85" rx="2">
+        <div class="data-card animate-in" style="--i:2;">
+            <h3>الهامش حسب البرودوي</h3>
+            <svg class="chart-svg" id="margin-chart" viewBox="0 0 600 280"></svg>
+        </div>
+
+        <section class="q-section">
+            <h2 class="h2">أسئلة سامي</h2>
+            <p class="muted">3 قرارات لازم تتخذهم. سامي مستنيك.</p>
+            <div id="questions"></div>
+        </section>
+
+        <div class="insight-final" id="insight-final">
+            <h3><span id="lesson-icon"></span> الدرس الكبير</h3>
+            <p style="margin-top: 8px;" id="insight-text"></p>
+            <button class="btn btn-primary btn-pulse" id="finish-btn" style="margin-top: 18px; background: var(--color-accent);">كمّل الرابور →</button>
+        </div>
+    </main>
+
+    <script src="../scripts/data.js"></script>
+    <script src="../scripts/app.js"></script>
+    <script>
+        const LEVEL_ID = 'data-l5';
+        const data = LEVELS[LEVEL_ID];
+
+        App.renderTopbar({
+            back: '../paths/data.html',
+            title: 'مستوى 5 · بوس داتا',
+            progressTarget: 0.8
+        });
+        App.injectMascot('../');
+        document.getElementById('lvl-badge').innerHTML = App.icon('chart', 14) + ' مستوى 5 · بوس';
+        document.getElementById('chart-bg').innerHTML = App.icon('chart', 110);
+        document.getElementById('lesson-icon').innerHTML = App.icon('bulb', 22);
+
+        // ---------- Line chart with togglable products ----------
+        const palette = ['#0C447C', '#E87722', '#27500A', '#7C0C0C', '#5C2C0E', '#9b59b6', '#1D9E75', '#378ADD'];
+        const visible = new Set(['كسكسي 1 كغ', 'بسكويت سميرة', 'ماء صافية 1.5ل']);
+
+        function renderToggles() {
+            const wrap = document.getElementById('toggle-row');
+            wrap.innerHTML = '';
+            data.produits.forEach((p, i) => {
+                const b = document.createElement('button');
+                b.className = 'toggle-btn' + (visible.has(p) ? ' active' : '');
+                b.style.borderColor = visible.has(p) ? palette[i] : '';
+                if (visible.has(p)) {
+                    b.style.background = palette[i];
+                    b.style.color = 'white';
+                }
+                b.textContent = p;
+                b.addEventListener('click', () => {
+                    if (visible.has(p)) visible.delete(p);
+                    else visible.add(p);
+                    renderToggles();
+                    drawLines();
+                });
+                wrap.appendChild(b);
+            });
+        }
+
+        function drawLines() {
+            const svg = document.getElementById('line-chart');
+            const W = 600,
+                H = 360,
+                padL = 50,
+                padR = 100,
+                padT = 20,
+                padB = 40;
+            const allVals = data.produits.flatMap(p => visible.has(p) ? data.ventes[p] : []);
+            const max = Math.max(50, ...allVals);
+            const niceMax = Math.ceil(max / 50) * 50;
+            const chartW = W - padL - padR;
+            const chartH = H - padT - padB;
+
+            let html = '';
+            // Grid
+            for (let i = 0; i <= 5; i++) {
+                const y = padT + (i / 5) * chartH;
+                const v = Math.round(niceMax - (i / 5) * niceMax);
+                html += `<line class="grid-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"/>`;
+                html += `<text class="axis-label" x="${padL - 6}" y="${y + 4}" text-anchor="end">${v}</text>`;
+            }
+            // X axis labels
+            data.mois.forEach((m, i) => {
+                const x = padL + (i / (data.mois.length - 1)) * chartW;
+                html += `<text class="axis-label" x="${x}" y="${H - padB + 18}" text-anchor="middle">${m}</text>`;
+            });
+            // Lines
+            data.produits.forEach((p, i) => {
+                if (!visible.has(p)) return;
+                const color = palette[i];
+                const points = data.ventes[p].map((v, j) => {
+                    const x = padL + (j / (data.mois.length - 1)) * chartW;
+                    const y = padT + (1 - v / niceMax) * chartH;
+                    return {
+                        x,
+                        y,
+                        v
+                    };
+                });
+                const path = points.map((pt, k) => (k === 0 ? 'M' : 'L') + pt.x + ',' + pt.y).join(' ');
+                html += `<path class="line-path" d="${path}" stroke="${color}"/>`;
+                points.forEach(pt => {
+                    html += `<circle class="line-dot" cx="${pt.x}" cy="${pt.y}" r="5" stroke="${color}"/>`;
+                    html += `<text class="value-label" x="${pt.x + 8}" y="${pt.y - 6}" fill="${color}">${pt.v}</text>`;
+                });
+                // legend at right
+                const legendY = padT + i * 18;
+                html += `<line x1="${W - padR + 14}" y1="${legendY + 4}" x2="${W - padR + 30}" y2="${legendY + 4}" stroke="${color}" stroke-width="2.5"/>`;
+                html += `<text class="axis-label" x="${W - padR + 34}" y="${legendY + 8}" fill="${color}">${p}</text>`;
+            });
+            html += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"/>`;
+            html += `<line class="axis-line" x1="${padL}" y1="${H - padB}" x2="${W - padR}" y2="${H - padB}"/>`;
+            svg.innerHTML = html;
+        }
+
+        function drawMargins() {
+            const svg = document.getElementById('margin-chart');
+            const W = 600,
+                H = 280,
+                padL = 140,
+                padR = 30,
+                padT = 20,
+                padB = 30;
+            const chartW = W - padL - padR;
+            const barH = (H - padT - padB) / data.produits.length;
+            let html = '';
+            for (let i = 0; i <= 4; i++) {
+                const x = padL + (i / 4) * chartW;
+                html += `<line class="grid-line" x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}"/>`;
+                html += `<text class="axis-label" x="${x}" y="${H - padB + 14}" text-anchor="middle">${Math.round((i/4)*50)}%</text>`;
+            }
+            data.produits.forEach((p, i) => {
+                const y = padT + i * barH + 2;
+                const bh = barH - 8;
+                const marge = data.marges[p];
+                const len = (marge / 0.5) * chartW;
+                const color = palette[i];
+                html += `<text class="axis-label" x="${padL - 6}" y="${y + bh/2 + 4}" text-anchor="end">${p}</text>`;
+                html += `<rect x="${padL}" y="${y}" width="0" height="${bh}" fill="${color}" opacity="0.85" rx="2">
           <animate attributeName="width" from="0" to="${len}" dur="0.5s" fill="freeze" begin="${i*0.06}s" calcMode="spline" keySplines="0.22 1 0.36 1"/>
         </rect>`;
-        html += `<text class="value-label" x="${padL + len + 4}" y="${y + bh/2 + 4}">${(marge*100).toFixed(0)}%</text>`;
-      });
-      html += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"/>`;
-      svg.innerHTML = html;
-    }
+                html += `<text class="value-label" x="${padL + len + 4}" y="${y + bh/2 + 4}">${(marge*100).toFixed(0)}%</text>`;
+            });
+            html += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"/>`;
+            svg.innerHTML = html;
+        }
 
-    renderToggles();
-    drawLines();
-    drawMargins();
+        renderToggles();
+        drawLines();
+        drawMargins();
 
-    // ---------- Questions ----------
-    const qWrap = document.getElementById('questions');
-    let answered = 0, correctAnswers = 0;
+        // ---------- Questions ----------
+        const qWrap = document.getElementById('questions');
+        let answered = 0,
+            correctAnswers = 0;
 
-    data.questions.forEach((q, qi) => {
-      const card = document.createElement('div');
-      card.className = 'qcard animate-in';
-      card.style.setProperty('--i', qi + 3);
-      card.innerHTML = `
+        data.questions.forEach((q, qi) => {
+                    const card = document.createElement('div');
+                    card.className = 'qcard animate-in';
+                    card.style.setProperty('--i', qi + 3);
+                    card.innerHTML = `
         <p class="qenonce">
           <span class="qcard-num">${qi + 1}</span>${q.enonce}
         </p>
@@ -333,7 +475,7 @@
         if (answered === data.questions.length) {
           const insight = document.getElementById('insight-final');
           document.getElementById('insight-text').textContent =
-            `Les Biscuits Samira ont fait x5 en décembre (67 → 201 unités). Si Sami avait eu plus de stock, il aurait pu faire +800 TND. La saisonnalité est une opportunité, pas une anomalie.`;
+            `بسكويت سميرة عملت x5 في ديسمبر (67 → 201 كعبة). كان سامي عندو ستوك أكثر، كان ينجم يعمل +800 دينار. الموسمية فرصة، مش غلطة.`;
           insight.classList.add('show');
           setTimeout(() => insight.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
         }
@@ -347,10 +489,11 @@
         levelId: LEVEL_ID,
         xpEarned: 50 + bonus,
         stars,
-        insight: `Tu as rendu un vrai rapport. Un bon analyste ne regarde pas un chiffre seul — il regarde les marges, la saisonnalité, et le contexte avant de recommander.`,
+        insight: `عملت رابور محترم. المحلّل الشاطر ما يشوفش رقم وحدو — يشوف الهوامش، الموسمية، والسياق قبل ما ينصح.`,
         nextHref: '../paths/data.html',
       });
     });
-  </script>
+    </script>
 </body>
+
 </html>

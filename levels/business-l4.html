@@ -1,316 +1,432 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>L4 · La marge brute · Questify</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles/design.css"/>
-  <style>
-    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
-
-    .pricer {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .pricer-head {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .stat-tile {
-      background: var(--color-background-secondary);
-      padding: 14px 16px;
-      border-radius: var(--radius);
-    }
-    .stat-tile .lbl { font-size: 12px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; }
-    .stat-tile .val { font-size: 24px; font-weight: 700; color: var(--color-brown); margin-top: 4px; font-variant-numeric: tabular-nums; }
-    .stat-tile .val.accent { color: var(--color-accent); }
-    .stat-tile .val.success { color: var(--color-text-success); }
-    .stat-tile .val.danger { color: var(--color-text-danger); }
-
-    .slider-wrap {
-      margin-bottom: 18px;
-    }
-    .slider-row {
-      display: flex; justify-content: space-between;
-      font-size: 13px; color: var(--color-text-tertiary);
-      margin: 8px 4px 0;
-    }
-    .slider-row strong { color: var(--color-brown); font-size: 16px; }
-
-    .gauge {
-      position: relative;
-      height: 10px;
-      background: var(--color-background-secondary);
-      border-radius: 999px;
-      overflow: visible;
-      margin: 16px 0 28px;
-    }
-    .gauge-segment {
-      position: absolute;
-      top: 0; height: 100%;
-      border-radius: 999px;
-    }
-    .gauge-seg-danger  { background: rgba(216, 90, 48, 0.5);  }
-    .gauge-seg-warn    { background: rgba(232, 119, 34, 0.5); }
-    .gauge-seg-success { background: rgba(94, 201, 94, 0.5);  }
-    .gauge-needle {
-      position: absolute;
-      top: -8px;
-      width: 6px; height: 26px;
-      background: var(--color-brown);
-      border-radius: 3px;
-      transform: translateX(-50%);
-      transition: left 200ms var(--ease-out-quart);
-    }
-    .gauge-label {
-      position: absolute;
-      top: 16px;
-      font-size: 11px;
-      color: var(--color-text-tertiary);
-      transform: translateX(-50%);
-      font-weight: 500;
-    }
-
-    .verdict {
-      padding: 16px 18px;
-      border-radius: var(--radius);
-      font-weight: 500;
-      transition: all 250ms;
-    }
-    .verdict.danger { background: var(--color-background-danger); color: var(--color-text-danger); }
-    .verdict.warn   { background: #FFF5E0; color: var(--color-accent); }
-    .verdict.success{ background: var(--color-background-success); color: var(--color-text-success); }
-
-    .scenarios {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 18px;
-    }
-    .scen-btn {
-      padding: 12px;
-      border-radius: var(--radius);
-      border: 0.5px solid var(--color-border-tertiary);
-      background: var(--color-background-primary);
-      cursor: pointer;
-      transition: all 200ms;
-      text-align: center;
-      font: inherit;
-    }
-    .scen-btn:hover { transform: translateY(-1px); border-color: var(--color-border-secondary); }
-    .scen-btn .scen-name { font-weight: 600; color: var(--color-brown); font-size: 13px; }
-    .scen-btn .scen-price { font-size: 18px; font-weight: 700; color: var(--color-accent); margin: 2px 0; }
-    .scen-btn .scen-comm  { font-size: 11px; color: var(--color-text-tertiary); }
-
-    .final-card {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .final-card h3 { color: var(--color-heading); margin-bottom: 8px; }
-    .answer-row {
-      display: flex; gap: 10px; margin: 14px 0;
-    }
-    .answer-row input {
-      flex: 1; font-size: 18px; font-weight: 600;
-      padding: 14px 18px;
-    }
-    .answer-row .unit { display: inline-flex; align-items: center; padding: 0 14px; color: var(--color-text-tertiary); font-weight: 500; }
-    .explain {
-      margin-top: 14px;
-      padding: 12px 16px;
-      background: var(--color-background-info);
-      color: var(--color-text-info);
-      border-radius: var(--radius);
-      font-size: 14px;
-      display: none;
-    }
-    .explain.show { display: block; animation: animateIn 300ms; }
-
-    @media (max-width: 820px) {
-      .layout { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/design.css" />
+    <style>
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+        
+        .pricer {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .pricer-head {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-tile {
+            background: var(--color-background-secondary);
+            padding: 14px 16px;
+            border-radius: var(--radius);
+        }
+        
+        .stat-tile .lbl {
+            font-size: 12px;
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        
+        .stat-tile .val {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-brown);
+            margin-top: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .stat-tile .val.accent {
+            color: var(--color-accent);
+        }
+        
+        .stat-tile .val.success {
+            color: var(--color-text-success);
+        }
+        
+        .stat-tile .val.danger {
+            color: var(--color-text-danger);
+        }
+        
+        .slider-wrap {
+            margin-bottom: 18px;
+        }
+        
+        .slider-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--color-text-tertiary);
+            margin: 8px 4px 0;
+        }
+        
+        .slider-row strong {
+            color: var(--color-brown);
+            font-size: 16px;
+        }
+        
+        .gauge {
+            position: relative;
+            height: 10px;
+            background: var(--color-background-secondary);
+            border-radius: 999px;
+            overflow: visible;
+            margin: 16px 0 28px;
+        }
+        
+        .gauge-segment {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            border-radius: 999px;
+        }
+        
+        .gauge-seg-danger {
+            background: rgba(216, 90, 48, 0.5);
+        }
+        
+        .gauge-seg-warn {
+            background: rgba(232, 119, 34, 0.5);
+        }
+        
+        .gauge-seg-success {
+            background: rgba(94, 201, 94, 0.5);
+        }
+        
+        .gauge-needle {
+            position: absolute;
+            top: -8px;
+            width: 6px;
+            height: 26px;
+            background: var(--color-brown);
+            border-radius: 3px;
+            transform: translateX(-50%);
+            transition: left 200ms var(--ease-out-quart);
+        }
+        
+        .gauge-label {
+            position: absolute;
+            top: 16px;
+            font-size: 11px;
+            color: var(--color-text-tertiary);
+            transform: translateX(-50%);
+            font-weight: 500;
+        }
+        
+        .verdict {
+            padding: 16px 18px;
+            border-radius: var(--radius);
+            font-weight: 500;
+            transition: all 250ms;
+        }
+        
+        .verdict.danger {
+            background: var(--color-background-danger);
+            color: var(--color-text-danger);
+        }
+        
+        .verdict.warn {
+            background: #FFF5E0;
+            color: var(--color-accent);
+        }
+        
+        .verdict.success {
+            background: var(--color-background-success);
+            color: var(--color-text-success);
+        }
+        
+        .scenarios {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 18px;
+        }
+        
+        .scen-btn {
+            padding: 12px;
+            border-radius: var(--radius);
+            border: 0.5px solid var(--color-border-tertiary);
+            background: var(--color-background-primary);
+            cursor: pointer;
+            transition: all 200ms;
+            text-align: center;
+            font: inherit;
+        }
+        
+        .scen-btn:hover {
+            transform: translateY(-1px);
+            border-color: var(--color-border-secondary);
+        }
+        
+        .scen-btn .scen-name {
+            font-weight: 600;
+            color: var(--color-brown);
+            font-size: 13px;
+        }
+        
+        .scen-btn .scen-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin: 2px 0;
+        }
+        
+        .scen-btn .scen-comm {
+            font-size: 11px;
+            color: var(--color-text-tertiary);
+        }
+        
+        .final-card {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .final-card h3 {
+            color: var(--color-heading);
+            margin-bottom: 8px;
+        }
+        
+        .answer-row {
+            display: flex;
+            gap: 10px;
+            margin: 14px 0;
+        }
+        
+        .answer-row input {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 14px 18px;
+        }
+        
+        .answer-row .unit {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 14px;
+            color: var(--color-text-tertiary);
+            font-weight: 500;
+        }
+        
+        .explain {
+            margin-top: 14px;
+            padding: 12px 16px;
+            background: var(--color-background-info);
+            color: var(--color-text-info);
+            border-radius: var(--radius);
+            font-size: 14px;
+            display: none;
+        }
+        
+        .explain.show {
+            display: block;
+            animation: animateIn 300ms;
+        }
+        
+        @media (max-width: 820px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <main class="container">
-    <header class="animate-in" style="margin-bottom: 24px;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span class="badge badge-business" id="lvl-badge">Niveau 4</span>
-        <span class="muted" style="font-size:14px;">Business · La marge brute</span>
-      </div>
-      <h1 class="h1" style="margin-top: 12px;">À quel prix tu vends ?</h1>
-      <p class="lead" style="margin-top: 10px;" id="market-context"></p>
-    </header>
+    <main class="container">
+        <header class="animate-in" style="margin-bottom: 24px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span class="badge badge-business" id="lvl-badge">مستوى 4</span>
+                <span class="muted" style="font-size:14px;">بيزنس · الهامش الإجمالي</span>
+            </div>
+            <h1 class="h1" style="margin-top: 12px;">بقداش تبيع ؟</h1>
+            <p class="lead" style="margin-top: 10px;" id="market-context"></p>
+        </header>
 
-    <section class="layout">
-      <div class="pricer animate-in" style="--i:1;">
-        <div class="pricer-head">
-          <div class="stat-tile">
-            <div class="lbl">Prix de revient</div>
-            <div class="val" id="cost-display">22</div>
-          </div>
-          <div class="stat-tile">
-            <div class="lbl">Marge brute</div>
-            <div class="val accent" id="margin-display">0%</div>
-          </div>
-        </div>
+        <section class="layout">
+            <div class="pricer animate-in" style="--i:1;">
+                <div class="pricer-head">
+                    <div class="stat-tile">
+                        <div class="lbl">سعر التكلفة</div>
+                        <div class="val" id="cost-display">22</div>
+                    </div>
+                    <div class="stat-tile">
+                        <div class="lbl">الهامش الإجمالي</div>
+                        <div class="val accent" id="margin-display">0%</div>
+                    </div>
+                </div>
 
-        <div class="slider-wrap">
-          <input type="range" id="price-slider" min="25" max="80" value="40" step="1"/>
-          <div class="slider-row">
-            <span>25 TND</span>
-            <strong id="price-num">40 TND</strong>
-            <span>80 TND</span>
-          </div>
-        </div>
+                <div class="slider-wrap">
+                    <input type="range" id="price-slider" min="25" max="80" value="40" step="1" />
+                    <div class="slider-row">
+                        <span>25 دينار</span>
+                        <strong id="price-num">40 دينار</strong>
+                        <span>80 دينار</span>
+                    </div>
+                </div>
 
-        <div class="gauge">
-          <div class="gauge-segment gauge-seg-danger" style="left:0%; width:33%;"></div>
-          <div class="gauge-segment gauge-seg-warn"   style="left:33%; width:37%;"></div>
-          <div class="gauge-segment gauge-seg-success" style="left:70%; width:30%;"></div>
-          <div class="gauge-needle" id="needle"></div>
-          <div class="gauge-label" style="left:16%;">Trop serré</div>
-          <div class="gauge-label" style="left:52%;">Viable</div>
-          <div class="gauge-label" style="left:85%;">Excellent</div>
-        </div>
+                <div class="gauge">
+                    <div class="gauge-segment gauge-seg-danger" style="left:0%; width:33%;"></div>
+                    <div class="gauge-segment gauge-seg-warn" style="left:33%; width:37%;"></div>
+                    <div class="gauge-segment gauge-seg-success" style="left:70%; width:30%;"></div>
+                    <div class="gauge-needle" id="needle"></div>
+                    <div class="gauge-label" style="left:16%;">مكبوس برشا</div>
+                    <div class="gauge-label" style="left:52%;">معقول</div>
+                    <div class="gauge-label" style="left:85%;">ممتاز</div>
+                </div>
 
-        <div class="verdict" id="verdict">Bouge le curseur pour voir le verdict.</div>
+                <div class="verdict" id="verdict">حرّك السلايدر باش تشوف الحكم.</div>
 
-        <div class="scenarios" id="scenarios"></div>
-      </div>
+                <div class="scenarios" id="scenarios"></div>
+            </div>
 
-      <div class="final-card animate-in" style="--i:2;">
-        <h3>Question finale</h3>
-        <p class="muted" id="final-q" style="margin-bottom: 8px;"></p>
-        <p style="font-family: monospace; font-size: 13px; padding: 10px 14px; background: var(--color-background-secondary); border-radius: 8px; color: var(--color-text-secondary);">
-          Formule à retrouver : Prix = Coût ÷ (1 − marge)
-        </p>
-        <div class="answer-row">
-          <input type="number" step="0.01" id="final-input" placeholder="Ta réponse..."/>
-          <span class="unit">TND</span>
-        </div>
-        <div style="display:flex; gap:10px;">
-          <button class="btn btn-primary" id="check-final">Vérifier</button>
-          <button class="btn btn-primary btn-pulse" id="finish-btn" style="display:none;">Continuer →</button>
-        </div>
-        <div class="explain" id="final-explain"></div>
-      </div>
-    </section>
-  </main>
+            <div class="final-card animate-in" style="--i:2;">
+                <h3>السؤال الأخير</h3>
+                <p class="muted" id="final-q" style="margin-bottom: 8px;"></p>
+                <p style="font-family: monospace; font-size: 13px; padding: 10px 14px; background: var(--color-background-secondary); border-radius: 8px; color: var(--color-text-secondary);">
+                    الفورمول: السوم = التكلفة ÷ (1 − الهامش)
+                </p>
+                <div class="answer-row">
+                    <input type="number" step="0.01" id="final-input" placeholder="إجابتك..." />
+                    <span class="unit">TND</span>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-primary" id="check-final">تأكّد</button>
+                    <button class="btn btn-primary btn-pulse" id="finish-btn" style="display:none;">كمّل →</button>
+                </div>
+                <div class="explain" id="final-explain"></div>
+            </div>
+        </section>
+    </main>
 
-  <script src="../scripts/data.js"></script>
-  <script src="../scripts/app.js"></script>
-  <script>
-    const LEVEL_ID = 'business-l4';
-    const data = LEVELS[LEVEL_ID];
+    <script src="../scripts/data.js"></script>
+    <script src="../scripts/app.js"></script>
+    <script>
+        const LEVEL_ID = 'business-l4';
+        const data = LEVELS[LEVEL_ID];
 
-    App.renderTopbar({ back: '../paths/business.html', title: 'Niveau 4 · Marge brute', progressTarget: 0.6 });
-    App.injectMascot('../');
-    document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' Niveau 4';
+        App.renderTopbar({
+            back: '../paths/business.html',
+            title: 'مستوى 4 · هامش إجمالي',
+            progressTarget: 0.6
+        });
+        App.injectMascot('../');
+        document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' مستوى 4';
 
-    document.getElementById('market-context').textContent = data.contextMarche;
-    document.getElementById('final-q').textContent = data.questionFinale;
-    document.getElementById('cost-display').textContent = data.prixRevient;
+        document.getElementById('market-context').textContent = data.contextMarche;
+        document.getElementById('final-q').textContent = data.questionFinale;
+        document.getElementById('cost-display').textContent = data.prixRevient;
 
-    const slider = document.getElementById('price-slider');
-    const priceNum = document.getElementById('price-num');
-    const marginDisplay = document.getElementById('margin-display');
-    const needle = document.getElementById('needle');
-    const verdict = document.getElementById('verdict');
+        const slider = document.getElementById('price-slider');
+        const priceNum = document.getElementById('price-num');
+        const marginDisplay = document.getElementById('margin-display');
+        const needle = document.getElementById('needle');
+        const verdict = document.getElementById('verdict');
 
-    function update(price) {
-      priceNum.textContent = price + ' TND';
-      const margin = ((price - data.prixRevient) / price) * 100;
-      marginDisplay.textContent = margin.toFixed(1) + '%';
+        function update(price) {
+            priceNum.textContent = price + ' TND';
+            const margin = ((price - data.prixRevient) / price) * 100;
+            marginDisplay.textContent = margin.toFixed(1) + '%';
 
-      // Needle position based on price range 25..80
-      const pct = ((price - 25) / (80 - 25)) * 100;
-      needle.style.left = pct + '%';
+            // Needle position based on price range 25..80
+            const pct = ((price - 25) / (80 - 25)) * 100;
+            needle.style.left = pct + '%';
 
-      // Verdict colors based on absolute price thresholds
-      verdict.classList.remove('danger','warn','success');
-      marginDisplay.classList.remove('accent','success','danger');
-      if (price < data.seuils.tropSerre) {
-        verdict.classList.add('danger');
-        marginDisplay.classList.add('danger');
-        verdict.innerHTML = `<strong>Trop serré.</strong> ${data.verdicts.tropSerre}`;
-      } else if (price < data.seuils.viable) {
-        verdict.classList.add('warn');
-        marginDisplay.classList.add('accent');
-        verdict.innerHTML = `<strong>Pas mal.</strong> Tu couvres tes coûts mais reste prudent.`;
-      } else if (price < data.seuils.excellent) {
-        verdict.classList.add('success');
-        marginDisplay.classList.add('success');
-        verdict.innerHTML = `<strong>Viable.</strong> ${data.verdicts.viable}`;
-      } else {
-        verdict.classList.add('success');
-        marginDisplay.classList.add('success');
-        verdict.innerHTML = `<strong>Excellent.</strong> ${data.verdicts.excellent}`;
-      }
-    }
+            // Verdict colors based on absolute price thresholds
+            verdict.classList.remove('danger', 'warn', 'success');
+            marginDisplay.classList.remove('accent', 'success', 'danger');
+            if (price < data.seuils.tropSerre) {
+                verdict.classList.add('danger');
+                marginDisplay.classList.add('danger');
+                verdict.innerHTML = `<strong>مكبوس برشا.</strong> ${data.verdicts.tropSerre}`;
+            } else if (price < data.seuils.viable) {
+                verdict.classList.add('warn');
+                marginDisplay.classList.add('accent');
+                verdict.innerHTML = `<strong>معقول.</strong> تغطي مصاريفك أما خليك حذر.`;
+            } else if (price < data.seuils.excellent) {
+                verdict.classList.add('success');
+                marginDisplay.classList.add('success');
+                verdict.innerHTML = `<strong>معقول.</strong> ${data.verdicts.viable}`;
+            } else {
+                verdict.classList.add('success');
+                marginDisplay.classList.add('success');
+                verdict.innerHTML = `<strong>ممتاز.</strong> ${data.verdicts.excellent}`;
+            }
+        }
 
-    slider.addEventListener('input', () => update(+slider.value));
-    update(+slider.value);
+        slider.addEventListener('input', () => update(+slider.value));
+        update(+slider.value);
 
-    // Scenarios
-    const scenWrap = document.getElementById('scenarios');
-    data.scenarios.forEach(s => {
-      const b = document.createElement('button');
-      b.className = 'scen-btn';
-      b.innerHTML = `
+        // Scenarios
+        const scenWrap = document.getElementById('scenarios');
+        data.scenarios.forEach(s => {
+            const b = document.createElement('button');
+            b.className = 'scen-btn';
+            b.innerHTML = `
         <div class="scen-name">${s.nom}</div>
         <div class="scen-price">${s.prixVente} TND</div>
         <div class="scen-comm">${s.commentaire}</div>
       `;
-      b.addEventListener('click', () => {
-        slider.value = s.prixVente;
-        update(s.prixVente);
-        App.toast(s.commentaire);
-        App.mascot('happy');
-      });
-      scenWrap.appendChild(b);
-    });
+            b.addEventListener('click', () => {
+                slider.value = s.prixVente;
+                update(s.prixVente);
+                App.toast(s.commentaire);
+                App.mascot('happy');
+            });
+            scenWrap.appendChild(b);
+        });
 
-    // Final question
-    document.getElementById('check-final').addEventListener('click', () => {
-      const val = parseFloat(document.getElementById('final-input').value);
-      if (isNaN(val)) { App.toast('Entre un nombre.', 'danger'); return; }
-      const correct = Math.abs(val - data.reponseFinale) <= 0.5;
-      const expl = document.getElementById('final-explain');
-      if (correct) {
-        App.celebrateElement(document.getElementById('final-input').parentElement);
-        expl.textContent = data.formule;
-        expl.classList.add('show');
-        document.getElementById('check-final').style.display = 'none';
-        document.getElementById('finish-btn').style.display = '';
-        App.addXP(15);
-      } else {
-        App.shakeElement(document.getElementById('final-input').parentElement);
-        expl.textContent = `Pas tout à fait. Réfléchis : 22 ÷ (1 - 0.4) = ?`;
-        expl.classList.add('show');
-      }
-    });
+        // Final question
+        document.getElementById('check-final').addEventListener('click', () => {
+            const val = parseFloat(document.getElementById('final-input').value);
+            if (isNaN(val)) {
+                App.toast('Entre un nombre.', 'danger');
+                return;
+            }
+            const correct = Math.abs(val - data.reponseFinale) <= 0.5;
+            const expl = document.getElementById('final-explain');
+            if (correct) {
+                App.celebrateElement(document.getElementById('final-input').parentElement);
+                expl.textContent = data.formule;
+                expl.classList.add('show');
+                document.getElementById('check-final').style.display = 'none';
+                document.getElementById('finish-btn').style.display = '';
+                App.addXP(15);
+            } else {
+                App.shakeElement(document.getElementById('final-input').parentElement);
+                expl.textContent = `Pas tout à fait. Réfléchis : 22 ÷ (1 - 0.4) = ?`;
+                expl.classList.add('show');
+            }
+        });
 
-    document.getElementById('finish-btn').addEventListener('click', () => {
-      App.showLevelComplete({
-        levelId: LEVEL_ID,
-        xpEarned: 10,
-        stars: 3,
-        insight: `La marge brute = (Prix − Coût) ÷ Prix. ${data.reponseFinale} TND te donne pile 40% de marge sur un prix de revient de 22 TND.`,
-        nextHref: '../paths/business.html',
-      });
-    });
-  </script>
+        document.getElementById('finish-btn').addEventListener('click', () => {
+            App.showLevelComplete({
+                levelId: LEVEL_ID,
+                xpEarned: 10,
+                stars: 3,
+                insight: `La marge brute = (Prix − Coût) ÷ Prix. ${data.reponseFinale} TND te donne pile 40% de marge sur un prix de revient de 22 TND.`,
+                nextHref: '../paths/business.html',
+            });
+        });
+    </script>
 </body>
+
 </html>

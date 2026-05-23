@@ -1,390 +1,504 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>L5 · Lancer ta marque · Questify</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles/design.css"/>
-  <style>
-    .boss-banner {
-      background: linear-gradient(135deg, var(--color-brown), var(--color-brown-dark));
-      color: var(--color-background-primary);
-      padding: 28px;
-      border-radius: var(--radius-lg);
-      margin-bottom: 28px;
-      position: relative;
-      overflow: hidden;
-    }
-    .boss-banner .crown-bg {
-      position: absolute;
-      right: 28px; top: 50%;
-      transform: translateY(-50%);
-      width: 120px; height: 120px;
-      opacity: 0.18;
-      color: white;
-    }
-    .boss-banner .crown-bg svg { width: 100%; height: 100%; }
-    .boss-banner h1 { color: var(--color-background-primary); margin-bottom: 6px; }
-    .boss-banner p { color: rgba(255,248,240,0.8); }
-
-    .budget-strip {
-      position: sticky;
-      top: 64px;
-      z-index: 20;
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 16px 22px;
-      margin-bottom: 24px;
-      box-shadow: 0 2px 8px rgba(92,44,14,0.06);
-    }
-    .budget-strip .row {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 10px;
-    }
-    .budget-strip .label {
-      font-weight: 600;
-      color: var(--color-brown);
-    }
-    .budget-strip .remaining {
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--color-text-success);
-    }
-    .budget-strip .remaining.warn { color: var(--color-accent); }
-    .budget-strip .remaining.over { color: var(--color-text-danger); }
-    .budget-bar {
-      height: 8px;
-      background: var(--color-background-secondary);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .budget-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--color-text-success), var(--color-accent));
-      border-radius: 999px;
-      width: 0%;
-      transition: width 400ms var(--ease-out-quart);
-    }
-    .budget-bar-fill.over { background: var(--color-text-danger); }
-
-    .category {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .category h3 {
-      color: var(--color-heading);
-      margin-bottom: 14px;
-    }
-    .options {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    .opt-card {
-      background: var(--color-background-primary);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius);
-      padding: 16px;
-      cursor: pointer;
-      transition: all 200ms var(--ease-out-quart);
-      text-align: left;
-      font: inherit;
-      display: flex; flex-direction: column;
-      min-height: 110px;
-    }
-    .opt-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--color-border-secondary);
-      box-shadow: 0 6px 16px rgba(92,44,14,0.06);
-    }
-    .opt-card.selected {
-      background: linear-gradient(135deg, #fff1de, #ffe6c2);
-      border-color: var(--color-accent);
-      box-shadow: 0 4px 12px rgba(232,119,34,0.2);
-    }
-    .opt-card .opt-cost {
-      font-weight: 700;
-      color: var(--color-brown);
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
-    .opt-card .opt-desc {
-      font-size: 13px;
-      color: var(--color-text-secondary);
-      flex: 1;
-    }
-    .opt-card .opt-stat {
-      font-size: 12px;
-      color: var(--color-text-tertiary);
-      margin-top: 8px;
-    }
-
-    .launch-row {
-      margin-top: 28px;
-      display: flex; gap: 12px;
-    }
-
-    /* Result */
-    .result {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      margin-top: 24px;
-      box-shadow: 0 4px 16px rgba(92,44,14,0.08);
-    }
-    .verdict {
-      display: flex; align-items: center; gap: 18px;
-      margin-bottom: 24px;
-    }
-    .verdict .grade {
-      width: 90px; height: 90px;
-      border-radius: 24px;
-      background: var(--color-accent);
-      color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 44px;
-      font-weight: 900;
-      box-shadow: 0 8px 24px rgba(232,119,34,0.3);
-    }
-    .verdict .grade.bad { background: var(--color-text-danger); }
-    .verdict .grade.great { background: var(--color-text-success); }
-    .verdict h2 { margin-bottom: 6px; }
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .stat-tile {
-      background: var(--color-background-secondary);
-      padding: 14px;
-      border-radius: var(--radius);
-    }
-    .stat-tile .lbl { font-size: 12px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; }
-    .stat-tile .val { font-size: 22px; font-weight: 700; color: var(--color-brown); margin-top: 4px; }
-    .stat-tile .val.neg { color: var(--color-text-danger); }
-    .stat-tile .val.pos { color: var(--color-text-success); }
-    .reflections {
-      background: var(--color-background-info);
-      color: var(--color-text-info);
-      padding: 18px;
-      border-radius: var(--radius);
-      margin: 16px 0;
-    }
-    .reflections li { margin: 6px 0 6px 18px; }
-
-    @media (max-width: 720px) {
-      .options { grid-template-columns: 1fr; }
-      .budget-strip { position: static; }
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/design.css" />
+    <style>
+        .boss-banner {
+            background: linear-gradient(135deg, var(--color-brown), var(--color-brown-dark));
+            color: var(--color-background-primary);
+            padding: 28px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .boss-banner .crown-bg {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 120px;
+            opacity: 0.18;
+            color: white;
+        }
+        
+        .boss-banner .crown-bg svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .boss-banner h1 {
+            color: var(--color-background-primary);
+            margin-bottom: 6px;
+        }
+        
+        .boss-banner p {
+            color: rgba(255, 248, 240, 0.8);
+        }
+        
+        .budget-strip {
+            position: sticky;
+            top: 64px;
+            z-index: 20;
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 16px 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(92, 44, 14, 0.06);
+        }
+        
+        .budget-strip .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .budget-strip .label {
+            font-weight: 600;
+            color: var(--color-brown);
+        }
+        
+        .budget-strip .remaining {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-text-success);
+        }
+        
+        .budget-strip .remaining.warn {
+            color: var(--color-accent);
+        }
+        
+        .budget-strip .remaining.over {
+            color: var(--color-text-danger);
+        }
+        
+        .budget-bar {
+            height: 8px;
+            background: var(--color-background-secondary);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        
+        .budget-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-text-success), var(--color-accent));
+            border-radius: 999px;
+            width: 0%;
+            transition: width 400ms var(--ease-out-quart);
+        }
+        
+        .budget-bar-fill.over {
+            background: var(--color-text-danger);
+        }
+        
+        .category {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .category h3 {
+            color: var(--color-heading);
+            margin-bottom: 14px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .opt-card {
+            background: var(--color-background-primary);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 200ms var(--ease-out-quart);
+            text-align: left;
+            font: inherit;
+            display: flex;
+            flex-direction: column;
+            min-height: 110px;
+        }
+        
+        .opt-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-border-secondary);
+            box-shadow: 0 6px 16px rgba(92, 44, 14, 0.06);
+        }
+        
+        .opt-card.selected {
+            background: linear-gradient(135deg, #fff1de, #ffe6c2);
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 12px rgba(232, 119, 34, 0.2);
+        }
+        
+        .opt-card .opt-cost {
+            font-weight: 700;
+            color: var(--color-brown);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        .opt-card .opt-desc {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            flex: 1;
+        }
+        
+        .opt-card .opt-stat {
+            font-size: 12px;
+            color: var(--color-text-tertiary);
+            margin-top: 8px;
+        }
+        
+        .launch-row {
+            margin-top: 28px;
+            display: flex;
+            gap: 12px;
+        }
+        /* Result */
+        
+        .result {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-top: 24px;
+            box-shadow: 0 4px 16px rgba(92, 44, 14, 0.08);
+        }
+        
+        .verdict {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        
+        .verdict .grade {
+            width: 90px;
+            height: 90px;
+            border-radius: 24px;
+            background: var(--color-accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            font-weight: 900;
+            box-shadow: 0 8px 24px rgba(232, 119, 34, 0.3);
+        }
+        
+        .verdict .grade.bad {
+            background: var(--color-text-danger);
+        }
+        
+        .verdict .grade.great {
+            background: var(--color-text-success);
+        }
+        
+        .verdict h2 {
+            margin-bottom: 6px;
+        }
+        
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-tile {
+            background: var(--color-background-secondary);
+            padding: 14px;
+            border-radius: var(--radius);
+        }
+        
+        .stat-tile .lbl {
+            font-size: 12px;
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        
+        .stat-tile .val {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-brown);
+            margin-top: 4px;
+        }
+        
+        .stat-tile .val.neg {
+            color: var(--color-text-danger);
+        }
+        
+        .stat-tile .val.pos {
+            color: var(--color-text-success);
+        }
+        
+        .reflections {
+            background: var(--color-background-info);
+            color: var(--color-text-info);
+            padding: 18px;
+            border-radius: var(--radius);
+            margin: 16px 0;
+        }
+        
+        .reflections li {
+            margin: 6px 0 6px 18px;
+        }
+        
+        @media (max-width: 720px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            .budget-strip {
+                position: static;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <main class="container">
-    <div class="boss-banner animate-in">
-      <div class="crown-bg" id="crown-bg"></div>
-      <span class="badge badge-business" style="background: rgba(255,255,255,0.15); color: white; margin-bottom: 10px;" id="lvl-badge">Niveau 5 · Boss</span>
-      <h1 class="h1">Lance ta marque</h1>
-      <p>500 TND. Quatre catégories. Pas de tutoriel. Tu fais des choix, le marché tranche.</p>
-    </div>
+    <main class="container">
+        <div class="boss-banner animate-in">
+            <div class="crown-bg" id="crown-bg"></div>
+            <span class="badge badge-business" style="background: rgba(255,255,255,0.15); color: white; margin-bottom: 10px;" id="lvl-badge">مستوى 5 · بوس</span>
+            <h1 class="h1">إطلق ماركتك</h1>
+            <p>500 دينار. 4 أقسام. ما فماش تيوري. إنت تختار والسوق يحكم.</p>
+        </div>
 
-    <div class="budget-strip animate-in" style="--i:1;">
-      <div class="row">
-        <span class="label">Budget restant</span>
-        <span class="remaining" id="remaining">500 TND</span>
-      </div>
-      <div class="budget-bar">
-        <div class="budget-bar-fill" id="bar-fill"></div>
-      </div>
-    </div>
+        <div class="budget-strip animate-in" style="--i:1;">
+            <div class="row">
+                <span class="label">الباقي من الميزانية</span>
+                <span class="remaining" id="remaining">500 TND</span>
+            </div>
+            <div class="budget-bar">
+                <div class="budget-bar-fill" id="bar-fill"></div>
+            </div>
+        </div>
 
-    <div id="categories" data-stagger></div>
+        <div id="categories" data-stagger></div>
 
-    <div class="launch-row">
-      <button class="btn btn-primary" id="launch-btn" disabled><span id="launch-icon"></span> Lancer la marque</button>
-      <a href="../paths/business.html" class="btn btn-ghost">← Quitter</a>
-    </div>
+        <div class="launch-row">
+            <button class="btn btn-primary" id="launch-btn" disabled><span id="launch-icon"></span> إطلق الماركة</button>
+            <a href="../paths/business.html" class="btn btn-ghost">← رجوع</a>
+        </div>
 
-    <div id="result-mount"></div>
-  </main>
+        <div id="result-mount"></div>
+    </main>
 
-  <script src="../scripts/data.js"></script>
-  <script src="../scripts/app.js"></script>
-  <script>
-    const LEVEL_ID = 'business-l5';
-    const data = LEVELS[LEVEL_ID];
+    <script src="../scripts/data.js"></script>
+    <script src="../scripts/app.js"></script>
+    <script>
+        const LEVEL_ID = 'business-l5';
+        const data = LEVELS[LEVEL_ID];
 
-    App.renderTopbar({ back: '../paths/business.html', title: 'Niveau 5 · Boss', progressTarget: 0.8 });
-    App.injectMascot('../');
-    document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' Niveau 5 · Boss';
-    document.getElementById('crown-bg').innerHTML = App.icon('crown', 120);
-    document.getElementById('launch-icon').innerHTML = App.icon('rocket', 16);
+        App.renderTopbar({
+            back: '../paths/business.html',
+            title: 'مستوى 5 · بوس',
+            progressTarget: 0.8
+        });
+        App.injectMascot('../');
+        document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' مستوى 5 · بوس';
+        document.getElementById('crown-bg').innerHTML = App.icon('crown', 120);
+        document.getElementById('launch-icon').innerHTML = App.icon('rocket', 16);
 
-    // ---------- Build categories ----------
-    const state = { choices: {} }; // catIdx -> optIdx
-    const wrap = document.getElementById('categories');
+        // ---------- Build categories ----------
+        const state = {
+            choices: {}
+        }; // catIdx -> optIdx
+        const wrap = document.getElementById('categories');
 
-    data.categories.forEach((cat, ci) => {
-      const c = document.createElement('div');
-      c.className = 'category animate-in';
-      c.style.setProperty('--i', ci + 2);
+        data.categories.forEach((cat, ci) => {
+            const c = document.createElement('div');
+            c.className = 'category animate-in';
+            c.style.setProperty('--i', ci + 2);
 
-      const optsHTML = cat.options.map((opt, oi) => {
-        let stat = '';
-        if (opt.unitesProduites) stat = `Produit ${opt.unitesProduites} unités`;
-        else if (opt.bonusPrix !== undefined) stat = opt.bonusPrix ? `+${opt.bonusPrix} TND prix de vente` : 'Pas de bonus prix';
-        else if (opt.tauxVente) stat = `Taux de vente : ${Math.round(opt.tauxVente * 100)}%`;
-        else if (opt.risque) stat = `Risque : ${opt.risque}`;
-        return `
+            const optsHTML = cat.options.map((opt, oi) => {
+                let stat = '';
+                if (opt.unitesProduites) stat = `تنتج ${opt.unitesProduites} كعبة`;
+                else if (opt.bonusPrix !== undefined) stat = opt.bonusPrix ? `+${opt.bonusPrix} دينار في السوم` : 'ما فماش بونيس في السوم';
+                else if (opt.tauxVente) stat = `نسبة البيع: ${Math.round(opt.tauxVente * 100)}%`;
+                else if (opt.risque) stat = `ريسك: ${opt.risque}`;
+                return `
           <button class="opt-card" data-ci="${ci}" data-oi="${oi}">
             <div class="opt-cost">${opt.cout} TND</div>
             <div class="opt-desc">${opt.description}</div>
             <div class="opt-stat">${stat}</div>
           </button>`;
-      }).join('');
+            }).join('');
 
-      c.innerHTML = `
+            c.innerHTML = `
         <h3>${cat.nom}</h3>
         <div class="options">${optsHTML}</div>
       `;
-      wrap.appendChild(c);
-    });
+            wrap.appendChild(c);
+        });
 
-    document.querySelectorAll('.opt-card').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const ci = +btn.dataset.ci, oi = +btn.dataset.oi;
-        state.choices[ci] = oi;
-        document.querySelectorAll(`.opt-card[data-ci="${ci}"]`).forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+        document.querySelectorAll('.opt-card').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const ci = +btn.dataset.ci,
+                    oi = +btn.dataset.oi;
+                state.choices[ci] = oi;
+                document.querySelectorAll(`.opt-card[data-ci="${ci}"]`).forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                updateBudget();
+            });
+        });
+
+        function totalSpend() {
+            let t = 0;
+            for (const ci in state.choices) {
+                t += data.categories[ci].options[state.choices[ci]].cout;
+            }
+            return t;
+        }
+
+        function updateBudget() {
+            const spent = totalSpend();
+            const remaining = data.budget - spent;
+            const rem = document.getElementById('remaining');
+            rem.textContent = `${remaining} TND`;
+            rem.classList.remove('warn', 'over');
+            if (remaining < 0) rem.classList.add('over');
+            else if (remaining < 50) rem.classList.add('warn');
+
+            const pct = Math.min(100, (spent / data.budget) * 100);
+            const fill = document.getElementById('bar-fill');
+            fill.style.width = pct + '%';
+            fill.classList.toggle('over', spent > data.budget);
+
+            const allChosen = Object.keys(state.choices).length === data.categories.length;
+            const withinBudget = spent <= data.budget;
+            document.getElementById('launch-btn').disabled = !(allChosen && withinBudget);
+            if (allChosen && withinBudget) {
+                document.getElementById('launch-btn').classList.add('btn-pulse');
+            } else {
+                document.getElementById('launch-btn').classList.remove('btn-pulse');
+            }
+        }
         updateBudget();
-      });
-    });
 
-    function totalSpend() {
-      let t = 0;
-      for (const ci in state.choices) {
-        t += data.categories[ci].options[state.choices[ci]].cout;
-      }
-      return t;
-    }
+        // ---------- Launch ----------
+        document.getElementById('launch-btn').addEventListener('click', launch);
 
-    function updateBudget() {
-      const spent = totalSpend();
-      const remaining = data.budget - spent;
-      const rem = document.getElementById('remaining');
-      rem.textContent = `${remaining} TND`;
-      rem.classList.remove('warn', 'over');
-      if (remaining < 0) rem.classList.add('over');
-      else if (remaining < 50) rem.classList.add('warn');
+        function launch() {
+            const c = state.choices;
+            const mat = data.categories[0].options[c[0]];
+            const emb = data.categories[1].options[c[1]];
+            const mkt = data.categories[2].options[c[2]];
+            const sto = data.categories[3].options[c[3]];
 
-      const pct = Math.min(100, (spent / data.budget) * 100);
-      const fill = document.getElementById('bar-fill');
-      fill.style.width = pct + '%';
-      fill.classList.toggle('over', spent > data.budget);
+            const cost = totalSpend();
+            const remaining = data.budget - cost;
 
-      const allChosen = Object.keys(state.choices).length === data.categories.length;
-      const withinBudget = spent <= data.budget;
-      document.getElementById('launch-btn').disabled = !(allChosen && withinBudget);
-      if (allChosen && withinBudget) {
-        document.getElementById('launch-btn').classList.add('btn-pulse');
-      } else {
-        document.getElementById('launch-btn').classList.remove('btn-pulse');
-      }
-    }
-    updateBudget();
+            // Compute unit cost + selling price
+            const unitCost = mat.cout / mat.unitesProduites + (emb.cout / mat.unitesProduites);
+            const sellPrice = data.prixMarcheDefaut + (emb.bonusPrix || 0);
+            const marginPerUnit = sellPrice - unitCost;
 
-    // ---------- Launch ----------
-    document.getElementById('launch-btn').addEventListener('click', launch);
+            // Units sold based on marketing taux
+            const unitsSold = Math.round(mat.unitesProduites * mkt.tauxVente);
 
-    function launch() {
-      const c = state.choices;
-      const mat = data.categories[0].options[c[0]];
-      const emb = data.categories[1].options[c[1]];
-      const mkt = data.categories[2].options[c[2]];
-      const sto = data.categories[3].options[c[3]];
+            // Risk: if no buffer and ambitious marketing, deduct lost sales
+            let lostUnits = 0;
+            if (sto.risque === 'عالي' && mkt.tauxVente > 0.75) {
+                lostUnits = Math.round(unitsSold * 0.18); // rupture
+            } else if (sto.risque === 'متوسط' && mkt.tauxVente > 0.85) {
+                lostUnits = Math.round(unitsSold * 0.08);
+            }
+            const actuallySold = unitsSold - lostUnits;
+            const revenue = actuallySold * sellPrice;
+            const totalProduceCost = mat.cout + emb.cout; // already paid
+            const totalSpentRealized = mat.cout + emb.cout + mkt.cout + sto.cout;
+            const profit = revenue - totalSpentRealized;
 
-      const cost = totalSpend();
-      const remaining = data.budget - cost;
+            // Verdict
+            let grade, gradeClass, headline, mood;
+            if (profit > 400) {
+                grade = 'A';
+                gradeClass = 'great';
+                headline = "كسّرت السوق.";
+                mood = 'flip';
+            } else if (profit > 150) {
+                grade = 'B';
+                gradeClass = 'great';
+                headline = "محكم. ربحت فلوس.";
+                mood = 'happy';
+            } else if (profit > 0) {
+                grade = 'C';
+                gradeClass = '';
+                headline = "رجعت مصاريفك بركا.";
+                mood = 'happy';
+            } else if (profit > -100) {
+                grade = 'D';
+                gradeClass = 'bad';
+                headline = "خسارة. ما غطّيتش مصاريفك.";
+                mood = 'sad';
+            } else {
+                grade = 'F';
+                gradeClass = 'bad';
+                headline = "يا حسرة. الجار عمل خير.";
+                mood = 'sad';
+            }
 
-      // Compute unit cost + selling price
-      const unitCost = mat.cout / mat.unitesProduites + (emb.cout / mat.unitesProduites);
-      const sellPrice = data.prixMarcheDefaut + (emb.bonusPrix || 0);
-      const marginPerUnit = sellPrice - unitCost;
+            // Insights
+            const insights = [];
+            if (mkt.tauxVente <= 0.6) insights.push("من غير ماركتينغ، برشا ناس ما لقاوكش.");
+            if (sto.risque === 'عالي' && lostUnits > 0) insights.push(`ضاعتلك ${lostUnits} كعبة بسبب نفاد الستوك.`);
+            if (mat.qualite === 3 && emb.qualite === 1) insights.push("تركيبة بريميوم في بلاستيك — موش منطقية للكليون.");
+            if (mat.qualite === 1 && emb.qualite === 3) insights.push("بواتة لوكس لتركيبة بسيطة — الكومنتارات باش تكون قاسية.");
+            if (remaining > 100) insights.push(`خلّيت ${remaining} دينار ما صرفتهمش — كان تنجم تستثمر أكثر.`);
+            if (profit > 0 && actuallySold === mat.unitesProduites) insights.push("الستوك كامل تباع. المرّة الجاية ارشق أعلى.");
 
-      // Units sold based on marketing taux
-      const unitsSold = Math.round(mat.unitesProduites * mkt.tauxVente);
-
-      // Risk: if no buffer and ambitious marketing, deduct lost sales
-      let lostUnits = 0;
-      if (sto.risque === 'Élevé' && mkt.tauxVente > 0.75) {
-        lostUnits = Math.round(unitsSold * 0.18); // rupture
-      } else if (sto.risque === 'Moyen' && mkt.tauxVente > 0.85) {
-        lostUnits = Math.round(unitsSold * 0.08);
-      }
-      const actuallySold = unitsSold - lostUnits;
-      const revenue = actuallySold * sellPrice;
-      const totalProduceCost = mat.cout + emb.cout; // already paid
-      const totalSpentRealized = mat.cout + emb.cout + mkt.cout + sto.cout;
-      const profit = revenue - totalSpentRealized;
-
-      // Verdict
-      let grade, gradeClass, headline, mood;
-      if (profit > 400) { grade = 'A'; gradeClass = 'great'; headline = "Tu as cassé le marché."; mood = 'flip'; }
-      else if (profit > 150) { grade = 'B'; gradeClass = 'great'; headline = "Solide. Tu as fait du profit."; mood = 'happy'; }
-      else if (profit > 0)  { grade = 'C'; gradeClass = '';      headline = "Tu rentres dans tes frais. Juste."; mood = 'happy'; }
-      else if (profit > -100) { grade = 'D'; gradeClass = 'bad';  headline = "Perte. Tu n'as pas couvert tes coûts."; mood = 'sad'; }
-      else { grade = 'F'; gradeClass = 'bad'; headline = "Aïe. Le voisin a fait mieux."; mood = 'sad'; }
-
-      // Insights
-      const insights = [];
-      if (mkt.tauxVente <= 0.6) insights.push("Avec zéro marketing, peu de gens t'ont trouvé.");
-      if (sto.risque === 'Élevé' && lostUnits > 0) insights.push(`Tu as perdu ${lostUnits} unités à cause d'une rupture de stock.`);
-      if (mat.qualite === 3 && emb.qualite === 1) insights.push("Une formule premium dans du plastique — incohérent pour le client.");
-      if (mat.qualite === 1 && emb.qualite === 3) insights.push("Coffret luxe pour formule basique — les avis seront durs.");
-      if (remaining > 100) insights.push(`Tu as laissé ${remaining} TND sur la table — tu aurais pu investir plus.`);
-      if (profit > 0 && actuallySold === mat.unitesProduites) insights.push("Stock entièrement vendu. Vise plus haut la prochaine fois.");
-
-      // Render result
-      const mount = document.getElementById('result-mount');
-      mount.innerHTML = `
+            // Render result
+            const mount = document.getElementById('result-mount');
+            mount.innerHTML = `
         <section class="result animate-in">
           <div class="verdict">
             <div class="grade ${gradeClass}">${grade}</div>
             <div>
               <h2 class="h2">${headline}</h2>
-              <p class="muted">Vente à ${sellPrice} TND/unité · ${actuallySold} unités vendues</p>
+              <p class="muted">تباع بـ ${sellPrice} دينار للكعبة · ${actuallySold} كعبة تباعة</p>
             </div>
           </div>
 
           <div class="stat-row">
-            <div class="stat-tile"><div class="lbl">Investi</div><div class="val">${totalSpentRealized} TND</div></div>
-            <div class="stat-tile"><div class="lbl">CA</div><div class="val">${revenue} TND</div></div>
-            <div class="stat-tile"><div class="lbl">Profit</div><div class="val ${profit >= 0 ? 'pos' : 'neg'}">${profit >= 0 ? '+' : ''}${profit} TND</div></div>
-            <div class="stat-tile"><div class="lbl">Marge / unité</div><div class="val">${marginPerUnit.toFixed(1)} TND</div></div>
+            <div class="stat-tile"><div class="lbl">استثمار</div><div class="val">${totalSpentRealized} دينار</div></div>
+            <div class="stat-tile"><div class="lbl">المداخيل</div><div class="val">${revenue} دينار</div></div>
+            <div class="stat-tile"><div class="lbl">ربح</div><div class="val ${profit >= 0 ? 'pos' : 'neg'}">${profit >= 0 ? '+' : ''}${profit} دينار</div></div>
+            <div class="stat-tile"><div class="lbl">هامش/كعبة</div><div class="val">${marginPerUnit.toFixed(1)} دينار</div></div>
           </div>
 
           ${insights.length ? `
             <div class="reflections">
-              <strong>Ce qui s'est passé :</strong>
+              <strong>شنوة صار :</strong>
               <ul>${insights.map(i => `<li>${i}</li>`).join('')}</ul>
             </div>
           ` : ''}
 
           <div class="reflections" style="background: var(--color-background-success); color: var(--color-text-success);">
-            <strong>Réflexion :</strong>
-            <ul>${data.questionsReflexion.map(q => `<li>${q.replace('X TND', `${profit} TND`)}</li>`).join('')}</ul>
+            <strong>تفكير :</strong>
+            <ul>${data.questionsReflexion.map(q => `<li>${q.replace('X دينار', `${profit} دينار`)}</li>`).join('')}</ul>
           </div>
 
-          <button class="btn btn-primary btn-pulse" id="claim-btn">Réclamer mes XP →</button>
+          <button class="btn btn-primary btn-pulse" id="claim-btn">إستلم حبّات الجوز →</button>
         </section>
       `;
 
@@ -406,11 +520,12 @@
           levelId: LEVEL_ID,
           xpEarned: xp,
           stars,
-          insight: `Tu viens de lancer ta première marque. ${headline} La vraie leçon : chaque décision en a coûté une autre.`,
+          insight: `توّا أطلقت أول ماركة متاعك. ${headline} الدرس الحقيقي: كل قرار خلّى قرار آخر يتبدل.`,
           nextHref: '../paths/business.html',
         });
       });
     }
-  </script>
+    </script>
 </body>
+
 </html>

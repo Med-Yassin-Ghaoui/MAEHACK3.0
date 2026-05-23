@@ -1,371 +1,481 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>L3 · Prix de revient · Questify</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles/design.css"/>
-  <style>
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      gap: 28px;
-      align-items: start;
-    }
-    .recipe {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .recipe-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; padding-bottom: 14px;
-      border-bottom: 0.5px solid var(--color-border-tertiary);
-    }
-    .recipe-header .lot {
-      font-size: 13px; color: var(--color-text-tertiary);
-    }
-    .recipe-header .lot strong { color: var(--color-brown); font-size: 18px; }
-    .cost-line {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 16px;
-      padding: 10px 0;
-      border-bottom: 0.5px dashed var(--color-border-tertiary);
-      align-items: center;
-    }
-    .cost-line:last-child { border-bottom: none; }
-    .cost-name { font-weight: 500; color: var(--color-brown); }
-    .cost-unit { color: var(--color-text-tertiary); font-size: 13px; }
-    .cost-total { font-weight: 600; color: var(--color-brown); font-variant-numeric: tabular-nums; }
-    .total-row {
-      display: flex; justify-content: space-between;
-      padding: 14px 0 0;
-      border-top: 1.5px solid var(--color-brown);
-      margin-top: 8px;
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--color-heading);
-    }
-    .total-row .val { color: var(--color-accent); font-variant-numeric: tabular-nums; }
-
-    .qcard {
-      background: var(--color-surface-card);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(92,44,14,0.04);
-    }
-    .qheader {
-      display: flex; justify-content: space-between;
-      font-size: 12px; font-weight: 600;
-      color: var(--color-text-tertiary);
-      text-transform: uppercase; letter-spacing: 0.04em;
-      margin-bottom: 12px;
-    }
-    .qtext {
-      font-size: 17px; color: var(--color-heading); font-weight: 600;
-      margin-bottom: 14px;
-    }
-    .answer-row {
-      display: flex; gap: 10px;
-      margin-bottom: 12px;
-    }
-    .answer-row input {
-      flex: 1; font-size: 18px; font-weight: 600;
-      padding: 14px 18px;
-    }
-    .answer-row .unit {
-      display: inline-flex; align-items: center; padding: 0 14px;
-      color: var(--color-text-tertiary); font-weight: 500;
-    }
-    .choices {
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .choice {
-      padding: 14px 18px;
-      border-radius: var(--radius);
-      border: 0.5px solid var(--color-border-tertiary);
-      background: var(--color-surface-card);
-      cursor: pointer;
-      transition: all 200ms var(--ease-out-quart);
-      display: flex; justify-content: space-between; align-items: center;
-      text-align: left;
-      font: inherit;
-      color: var(--color-brown);
-      font-weight: 500;
-    }
-    .choice:hover:not(.locked) {
-      transform: translateY(-1px);
-      border-color: var(--color-border-secondary);
-    }
-    .choice .price { font-size: 18px; font-weight: 700; color: var(--color-heading); }
-    .choice .margin { font-size: 13px; color: var(--color-text-tertiary); }
-    .choice.correct {
-      background: var(--color-background-success);
-      border-color: var(--color-text-success);
-      color: var(--color-text-success);
-    }
-    .choice.correct .price, .choice.correct .margin { color: var(--color-text-success); }
-    .choice.wrong {
-      background: var(--color-background-danger);
-      border-color: var(--color-border-danger);
-      color: var(--color-text-danger);
-    }
-    .choice.wrong .price, .choice.wrong .margin { color: var(--color-text-danger); }
-    .explain {
-      margin-top: 16px;
-      padding: 14px 18px;
-      background: var(--color-background-info);
-      color: var(--color-text-info);
-      border-radius: var(--radius);
-      font-size: 14px;
-      display: none;
-    }
-    .explain.show { display: block; animation: animateIn 350ms var(--ease-out-quart); }
-    .qnav {
-      margin-top: 18px;
-      display: flex; gap: 10px; justify-content: flex-end;
-    }
-    .step-dots {
-      display: flex; gap: 8px;
-      margin-bottom: 12px;
-    }
-    .step-dot {
-      width: 28px; height: 4px;
-      border-radius: 999px;
-      background: var(--color-background-secondary);
-      transition: background 250ms;
-    }
-    .step-dot.done { background: var(--color-text-success); }
-    .step-dot.active { background: var(--color-accent); }
-    @media (max-width: 880px) {
-      .layout { grid-template-columns: 1fr; }
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/design.css" />
+    <style>
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 28px;
+            align-items: start;
+        }
+        
+        .recipe {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .recipe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 0.5px solid var(--color-border-tertiary);
+        }
+        
+        .recipe-header .lot {
+            font-size: 13px;
+            color: var(--color-text-tertiary);
+        }
+        
+        .recipe-header .lot strong {
+            color: var(--color-brown);
+            font-size: 18px;
+        }
+        
+        .cost-line {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 16px;
+            padding: 10px 0;
+            border-bottom: 0.5px dashed var(--color-border-tertiary);
+            align-items: center;
+        }
+        
+        .cost-line:last-child {
+            border-bottom: none;
+        }
+        
+        .cost-name {
+            font-weight: 500;
+            color: var(--color-brown);
+        }
+        
+        .cost-unit {
+            color: var(--color-text-tertiary);
+            font-size: 13px;
+        }
+        
+        .cost-total {
+            font-weight: 600;
+            color: var(--color-brown);
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0 0;
+            border-top: 1.5px solid var(--color-brown);
+            margin-top: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-heading);
+        }
+        
+        .total-row .val {
+            color: var(--color-accent);
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .qcard {
+            background: var(--color-surface-card);
+            border: 0.5px solid var(--color-border-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(92, 44, 14, 0.04);
+        }
+        
+        .qheader {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 12px;
+        }
+        
+        .qtext {
+            font-size: 17px;
+            color: var(--color-heading);
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+        
+        .answer-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .answer-row input {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 14px 18px;
+        }
+        
+        .answer-row .unit {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 14px;
+            color: var(--color-text-tertiary);
+            font-weight: 500;
+        }
+        
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .choice {
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            border: 0.5px solid var(--color-border-tertiary);
+            background: var(--color-surface-card);
+            cursor: pointer;
+            transition: all 200ms var(--ease-out-quart);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+            font: inherit;
+            color: var(--color-brown);
+            font-weight: 500;
+        }
+        
+        .choice:hover:not(.locked) {
+            transform: translateY(-1px);
+            border-color: var(--color-border-secondary);
+        }
+        
+        .choice .price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-heading);
+        }
+        
+        .choice .margin {
+            font-size: 13px;
+            color: var(--color-text-tertiary);
+        }
+        
+        .choice.correct {
+            background: var(--color-background-success);
+            border-color: var(--color-text-success);
+            color: var(--color-text-success);
+        }
+        
+        .choice.correct .price,
+        .choice.correct .margin {
+            color: var(--color-text-success);
+        }
+        
+        .choice.wrong {
+            background: var(--color-background-danger);
+            border-color: var(--color-border-danger);
+            color: var(--color-text-danger);
+        }
+        
+        .choice.wrong .price,
+        .choice.wrong .margin {
+            color: var(--color-text-danger);
+        }
+        
+        .explain {
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: var(--color-background-info);
+            color: var(--color-text-info);
+            border-radius: var(--radius);
+            font-size: 14px;
+            display: none;
+        }
+        
+        .explain.show {
+            display: block;
+            animation: animateIn 350ms var(--ease-out-quart);
+        }
+        
+        .qnav {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .step-dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .step-dot {
+            width: 28px;
+            height: 4px;
+            border-radius: 999px;
+            background: var(--color-background-secondary);
+            transition: background 250ms;
+        }
+        
+        .step-dot.done {
+            background: var(--color-text-success);
+        }
+        
+        .step-dot.active {
+            background: var(--color-accent);
+        }
+        
+        @media (max-width: 880px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <main class="container">
-    <header class="animate-in" style="margin-bottom: 24px;">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span class="badge badge-business" id="lvl-badge">Niveau 3</span>
-        <span class="muted" style="font-size:14px;">Business · Prix de revient</span>
-      </div>
-      <h1 class="h1" style="margin-top: 12px;">Calculer un prix de revient</h1>
-    </header>
+    <main class="container">
+        <header class="animate-in" style="margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge badge-business" id="lvl-badge">مستوى 3</span>
+                <span class="muted" style="font-size:14px;">بيزنس · سعر التكلفة</span>
+            </div>
+            <h1 class="h1" style="margin-top: 12px;">حساب سعر التكلفة</h1>
+        </header>
 
-    <section class="layout">
-      <div class="recipe animate-in" style="--i:1;">
-        <div class="recipe-header">
-          <div>
-            <div class="lot">Lot de production</div>
-            <strong id="lot-num">50</strong>
-            <span class="muted" style="font-size:14px;"> bouteilles</span>
-          </div>
-          <span class="badge badge-business">Recette</span>
-        </div>
+        <section class="layout">
+            <div class="recipe animate-in" style="--i:1;">
+                <div class="recipe-header">
+                    <div>
+                        <div class="lot">لوط إنتاج</div>
+                        <strong id="lot-num">50</strong>
+                        <span class="muted" style="font-size:14px;"> دبوزة</span>
+                    </div>
+                    <span class="badge badge-business">وصفة</span>
+                </div>
 
-        <div id="costs"></div>
+                <div id="costs"></div>
 
-        <div class="total-row">
-          <span>Total du lot</span>
-          <span class="val"><span id="recipe-total">0</span> TND</span>
-        </div>
-      </div>
+                <div class="total-row">
+                    <span>مجموع اللوط</span>
+                    <span class="val"><span id="recipe-total">0</span> TND</span>
+                </div>
+            </div>
 
-      <div class="qcard animate-in" style="--i:2;">
-        <div class="step-dots" id="dots"></div>
-        <div class="qheader">
-          <span>Question <span id="qnum">1</span> / 3</span>
-          <span id="score-tag">+0 XP</span>
-        </div>
-        <p class="qtext" id="qtext"></p>
-        <div id="answer-mount"></div>
-        <div class="explain" id="explain"></div>
-        <div class="qnav">
-          <button class="btn btn-secondary" id="check-btn">Vérifier</button>
-          <button class="btn btn-primary" id="next-btn" style="display:none;">Suivant →</button>
-        </div>
-      </div>
-    </section>
-  </main>
+            <div class="qcard animate-in" style="--i:2;">
+                <div class="step-dots" id="dots"></div>
+                <div class="qheader">
+                    <span>سؤال <span id="qnum">1</span> / 3</span>
+                    <span id="score-tag">+0 XP</span>
+                </div>
+                <p class="qtext" id="qtext"></p>
+                <div id="answer-mount"></div>
+                <div class="explain" id="explain"></div>
+                <div class="qnav">
+                    <button class="btn btn-secondary" id="check-btn">تأكّد</button>
+                    <button class="btn btn-primary" id="next-btn" style="display:none;">اللي بعدو →</button>
+                </div>
+            </div>
+        </section>
+    </main>
 
-  <script src="../scripts/data.js"></script>
-  <script src="../scripts/app.js"></script>
-  <script>
-    const LEVEL_ID = 'business-l3';
-    const data = LEVELS[LEVEL_ID];
+    <script src="../scripts/data.js"></script>
+    <script src="../scripts/app.js"></script>
+    <script>
+        const LEVEL_ID = 'business-l3';
+        const data = LEVELS[LEVEL_ID];
 
-    App.renderTopbar({ back: '../paths/business.html', title: 'Niveau 3 · Prix de revient', progressTarget: 0.4 });
-    App.injectMascot('../');
-    document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' Niveau 3';
+        App.renderTopbar({
+            back: '../paths/business.html',
+            title: 'مستوى 3 · سعر التكلفة',
+            progressTarget: 0.4
+        });
+        App.injectMascot('../');
+        document.getElementById('lvl-badge').innerHTML = App.icon('briefcase', 14) + ' مستوى 3';
 
-    // Recipe
-    document.getElementById('lot-num').textContent = data.donnees.lot;
-    const costsEl = document.getElementById('costs');
-    data.donnees.couts.forEach(c => {
-      const line = document.createElement('div');
-      line.className = 'cost-line';
-      line.innerHTML = `
+        // Recipe
+        document.getElementById('lot-num').textContent = data.donnees.lot;
+        const costsEl = document.getElementById('costs');
+        data.donnees.couts.forEach(c => {
+            const line = document.createElement('div');
+            line.className = 'cost-line';
+            line.innerHTML = `
         <div>
           <div class="cost-name">${c.nom}</div>
-          <div class="cost-unit">${c.unitaire} TND × ${data.donnees.lot} unités</div>
+          <div class="cost-unit">${c.unitaire} TND × ${data.donnees.lot} كعبة</div>
         </div>
         <span class="cost-total">${c.total} TND</span>
       `;
-      costsEl.appendChild(line);
-    });
-    // animate the total counting up
-    App.rollNumberTo('#recipe-total', 0, data.donnees.totalLot, 1200);
+            costsEl.appendChild(line);
+        });
+        // animate the total counting up
+        App.rollNumberTo('#recipe-total', 0, data.donnees.totalLot, 1200);
 
-    // Dots
-    const dotsEl = document.getElementById('dots');
-    for (let i = 0; i < 3; i++) {
-      const d = document.createElement('div');
-      d.className = 'step-dot';
-      dotsEl.appendChild(d);
-    }
+        // Dots
+        const dotsEl = document.getElementById('dots');
+        for (let i = 0; i < 3; i++) {
+            const d = document.createElement('div');
+            d.className = 'step-dot';
+            dotsEl.appendChild(d);
+        }
 
-    // Quiz
-    let qIdx = 0, mistakes = 0, xpEarned = 0, awaiting = true;
+        // Quiz
+        let qIdx = 0,
+            mistakes = 0,
+            xpEarned = 0,
+            awaiting = true;
 
-    function renderQ() {
-      const q = data.questions[qIdx];
-      document.getElementById('qnum').textContent = qIdx + 1;
-      document.getElementById('explain').classList.remove('show');
-      const dots = dotsEl.children;
-      for (let i = 0; i < 3; i++) {
-        dots[i].classList.remove('active', 'done');
-        if (i < qIdx) dots[i].classList.add('done');
-        else if (i === qIdx) dots[i].classList.add('active');
-      }
-      document.getElementById('qtext').textContent = q.enonce;
-      const mount = document.getElementById('answer-mount');
-      mount.innerHTML = '';
-      document.getElementById('next-btn').style.display = 'none';
-      document.getElementById('check-btn').style.display = '';
-      awaiting = true;
+        function renderQ() {
+            const q = data.questions[qIdx];
+            document.getElementById('qnum').textContent = qIdx + 1;
+            document.getElementById('explain').classList.remove('show');
+            const dots = dotsEl.children;
+            for (let i = 0; i < 3; i++) {
+                dots[i].classList.remove('active', 'done');
+                if (i < qIdx) dots[i].classList.add('done');
+                else if (i === qIdx) dots[i].classList.add('active');
+            }
+            document.getElementById('qtext').textContent = q.enonce;
+            const mount = document.getElementById('answer-mount');
+            mount.innerHTML = '';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('check-btn').style.display = '';
+            awaiting = true;
 
-      if (q.choix) {
-        // multi-choice
-        const wrap = document.createElement('div');
-        wrap.className = 'choices';
-        q.choix.forEach((c, i) => {
-          const b = document.createElement('button');
-          b.className = 'choice';
-          b.dataset.i = i;
-          b.innerHTML = `
+            if (q.choix) {
+                // multi-choice
+                const wrap = document.createElement('div');
+                wrap.className = 'choices';
+                q.choix.forEach((c, i) => {
+                    const b = document.createElement('button');
+                    b.className = 'choice';
+                    b.dataset.i = i;
+                    b.innerHTML = `
             <div>
               <div class="price">${c.prix} TND</div>
               <div class="margin">Marge : ${c.marge}</div>
             </div>
             <span style="font-size:20px;">→</span>
           `;
-          b.addEventListener('click', () => selectChoice(b, c));
-          wrap.appendChild(b);
-        });
-        mount.appendChild(wrap);
-        document.getElementById('check-btn').style.display = 'none';
-      } else {
-        // numeric input
-        const row = document.createElement('div');
-        row.className = 'answer-row';
-        row.innerHTML = `
+                    b.addEventListener('click', () => selectChoice(b, c));
+                    wrap.appendChild(b);
+                });
+                mount.appendChild(wrap);
+                document.getElementById('check-btn').style.display = 'none';
+            } else {
+                // numeric input
+                const row = document.createElement('div');
+                row.className = 'answer-row';
+                row.innerHTML = `
           <input type="number" step="0.1" id="num-input" placeholder="Ta réponse..."/>
           <span class="unit">${qIdx === 1 ? 'TND/unité' : 'TND'}</span>
         `;
-        mount.appendChild(row);
-        document.getElementById('num-input').addEventListener('keydown', e => {
-          if (e.key === 'Enter') checkNumeric();
+                mount.appendChild(row);
+                document.getElementById('num-input').addEventListener('keydown', e => {
+                    if (e.key === 'Enter') checkNumeric();
+                });
+            }
+        }
+
+        document.getElementById('check-btn').addEventListener('click', checkNumeric);
+
+        function checkNumeric() {
+            if (!awaiting) return;
+            const q = data.questions[qIdx];
+            const input = document.getElementById('num-input');
+            if (!input) return;
+            const val = parseFloat(input.value);
+            if (isNaN(val)) {
+                App.toast('Entre un nombre.', 'danger');
+                return;
+            }
+            const tol = qIdx === 1 ? 0.2 : 1;
+            const correct = Math.abs(val - q.reponseCorrecte) <= tol;
+            awaiting = false;
+            const expl = document.getElementById('explain');
+            if (correct) {
+                App.celebrateElement(input.parentElement);
+                expl.textContent = q.feedbackSucces;
+                const reward = qIdx === 0 ? 8 : 10;
+                xpEarned += reward;
+                App.addXP(reward);
+                document.getElementById('score-tag').textContent = `+${xpEarned} XP`;
+            } else {
+                App.shakeElement(input.parentElement);
+                expl.textContent = q.feedbackErreur;
+                mistakes++;
+                awaiting = true; // allow retry
+                return;
+            }
+            expl.classList.add('show');
+            document.getElementById('check-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = '';
+        }
+
+        function selectChoice(btn, choice) {
+            if (!awaiting) return;
+            awaiting = false;
+            const allChoices = document.querySelectorAll('.choice');
+            allChoices.forEach(b => {
+                b.classList.add('locked');
+                const idx = +b.dataset.i;
+                const c = data.questions[qIdx].choix[idx];
+                if (c.correct) b.classList.add('correct');
+            });
+            const expl = document.getElementById('explain');
+            if (choice.correct) {
+                App.celebrateElement(btn);
+                xpEarned += 10;
+                App.addXP(10);
+                expl.textContent = data.questions[qIdx].feedbackSucces;
+            } else {
+                btn.classList.add('wrong');
+                App.shakeElement(btn);
+                mistakes++;
+                expl.textContent = "Pas tout à fait. La bonne réponse était 18 TND (32,6% de marge).";
+            }
+            expl.classList.add('show');
+            document.getElementById('score-tag').textContent = `+${xpEarned} XP`;
+            document.getElementById('next-btn').style.display = '';
+        }
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            qIdx++;
+            if (qIdx >= data.questions.length) finish();
+            else renderQ();
         });
-      }
-    }
 
-    document.getElementById('check-btn').addEventListener('click', checkNumeric);
+        function finish() {
+            // Mark all dots done
+            for (let i = 0; i < 3; i++) dotsEl.children[i].classList.remove('active'), dotsEl.children[i].classList.add('done');
+            const stars = mistakes === 0 ? 3 : (mistakes <= 1 ? 2 : 1);
+            const bonus = mistakes === 0 ? 10 : 0;
+            App.showLevelComplete({
+                levelId: LEVEL_ID,
+                xpEarned: bonus,
+                stars,
+                insight: "Le prix de revient = (somme de tous les coûts) ÷ (nombre d'unités). Sans ce chiffre, tu navigues à l'aveugle. " + data.piegeClassique,
+                nextHref: '../paths/business.html',
+            });
+        }
 
-    function checkNumeric() {
-      if (!awaiting) return;
-      const q = data.questions[qIdx];
-      const input = document.getElementById('num-input');
-      if (!input) return;
-      const val = parseFloat(input.value);
-      if (isNaN(val)) { App.toast('Entre un nombre.', 'danger'); return; }
-      const tol = qIdx === 1 ? 0.2 : 1;
-      const correct = Math.abs(val - q.reponseCorrecte) <= tol;
-      awaiting = false;
-      const expl = document.getElementById('explain');
-      if (correct) {
-        App.celebrateElement(input.parentElement);
-        expl.textContent = q.feedbackSucces;
-        const reward = qIdx === 0 ? 8 : 10;
-        xpEarned += reward;
-        App.addXP(reward);
-        document.getElementById('score-tag').textContent = `+${xpEarned} XP`;
-      } else {
-        App.shakeElement(input.parentElement);
-        expl.textContent = q.feedbackErreur;
-        mistakes++;
-        awaiting = true; // allow retry
-        return;
-      }
-      expl.classList.add('show');
-      document.getElementById('check-btn').style.display = 'none';
-      document.getElementById('next-btn').style.display = '';
-    }
-
-    function selectChoice(btn, choice) {
-      if (!awaiting) return;
-      awaiting = false;
-      const allChoices = document.querySelectorAll('.choice');
-      allChoices.forEach(b => {
-        b.classList.add('locked');
-        const idx = +b.dataset.i;
-        const c = data.questions[qIdx].choix[idx];
-        if (c.correct) b.classList.add('correct');
-      });
-      const expl = document.getElementById('explain');
-      if (choice.correct) {
-        App.celebrateElement(btn);
-        xpEarned += 10;
-        App.addXP(10);
-        expl.textContent = data.questions[qIdx].feedbackSucces;
-      } else {
-        btn.classList.add('wrong');
-        App.shakeElement(btn);
-        mistakes++;
-        expl.textContent = "Pas tout à fait. La bonne réponse était 18 TND (32,6% de marge).";
-      }
-      expl.classList.add('show');
-      document.getElementById('score-tag').textContent = `+${xpEarned} XP`;
-      document.getElementById('next-btn').style.display = '';
-    }
-
-    document.getElementById('next-btn').addEventListener('click', () => {
-      qIdx++;
-      if (qIdx >= data.questions.length) finish();
-      else renderQ();
-    });
-
-    function finish() {
-      // Mark all dots done
-      for (let i = 0; i < 3; i++) dotsEl.children[i].classList.remove('active'), dotsEl.children[i].classList.add('done');
-      const stars = mistakes === 0 ? 3 : (mistakes <= 1 ? 2 : 1);
-      const bonus = mistakes === 0 ? 10 : 0;
-      App.showLevelComplete({
-        levelId: LEVEL_ID,
-        xpEarned: bonus,
-        stars,
-        insight: "Le prix de revient = (somme de tous les coûts) ÷ (nombre d'unités). Sans ce chiffre, tu navigues à l'aveugle. " + data.piegeClassique,
-        nextHref: '../paths/business.html',
-      });
-    }
-
-    renderQ();
-  </script>
+        renderQ();
+    </script>
 </body>
+
 </html>
